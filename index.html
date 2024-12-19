@@ -42,7 +42,7 @@
       position: fixed;
       top: 50%;
       transform: translateY(-50%);
-      width: 350px;
+      width: 45%; /* 调整宽度从350px到45% */
       max-width: 90%;
       background-color: #ffffff;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -55,12 +55,12 @@
     
     /* Category Panel */
     #categoryPanel {
-      left: 20px;
+      left: 1%; /* 调整位置从20px到1% */
     }
     
     /* NLP Panel */
     #nlpPanel {
-      right: 20px;
+      right: 1%; /* 调整位置从20px到1% */
     }
     
     /* Modal adjustments */
@@ -105,6 +105,23 @@
     #mainContent {
       display: none;
     }
+    
+    /* Back Button Styling */
+    #back-button {
+      display: none; /* 初始隐藏 */
+    }
+    
+    /* Adjust main content to take remaining space */
+    @media (min-width: 992px) {
+      #mainContent .col-lg-8 {
+        flex: 0 0 50%;
+        max-width: 50%;
+      }
+      #mainContent .col-lg-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+      }
+    }
   </style>
 </head>
 <body>
@@ -117,9 +134,15 @@
   
   <!-- Main Content Area -->
   <div class="container" id="mainContent">
+    <!-- 回退按钮 -->
+    <div class="row mb-3">
+      <div class="col-12">
+        <button id="back-button" class="btn btn-secondary">⬅️ 回退</button>
+      </div>
+    </div>
     <div class="row">
       <!-- Dataset List -->
-      <div class="col-lg-8 mb-4">
+      <div class="col-lg-6 mb-4"> <!-- 从col-lg-8改为col-lg-6 -->
         <h2 class="h4 mb-3">Datasets</h2>
         <div id="dataset-list" class="row g-3">
           <!-- Dataset cards will be injected here -->
@@ -128,7 +151,7 @@
       </div>
 
       <!-- Dataset Details -->
-      <div id="dataset-info" class="col-lg-4 p-4 bg-white shadow rounded d-none">
+      <div id="dataset-info" class="col-lg-6 p-4 bg-white shadow rounded d-none"> <!-- 从col-lg-4改为col-lg-6 -->
         <h4 id="dataset-title" class="mb-3">Dataset Information</h4>
         <div id="dataset-details" class="mb-3" style="max-height: 400px; overflow-y: auto;">
           <!-- Dataset details will be injected here -->
@@ -1817,7 +1840,7 @@
         "Dice huge_ft": "0.6396"
     }
 ].concat([]); // Ensure the full JSON array is included
-  
+    
   // Function: Parse Category-EN string to object
   function parseCategoryEN(catStr) {
     try {
@@ -1966,6 +1989,8 @@
       document.getElementById('nlpPanel').style.display = 'none';
       // Show main content
       document.getElementById('mainContent').style.display = 'block';
+      // Show back button
+      document.getElementById('back-button').style.display = 'block';
     }
   });
 
@@ -2124,6 +2149,8 @@
 
         // Show main content
         document.getElementById('mainContent').style.display = 'block';
+        // Show back button
+        document.getElementById('back-button').style.display = 'block';
 
         // Create dataset cards
         filteredDatasets.forEach(ds => {
@@ -2154,7 +2181,26 @@
           datasetListDiv.appendChild(cardCol);
         });
       }
-    }
+  }
+});
+
+  // Back button functionality
+  const backButton = document.getElementById('back-button');
+  backButton.addEventListener('click', () => {
+    // Hide main content
+    document.getElementById('mainContent').style.display = 'none';
+    // Show floating panels
+    document.getElementById('categoryPanel').style.display = 'block';
+    document.getElementById('nlpPanel').style.display = 'block';
+    // Hide back button
+    backButton.style.display = 'none';
+    // Hide dataset info if visible
+    document.getElementById('dataset-info').classList.add('d-none');
+    // Optionally, clear dataset list
+    document.getElementById('dataset-list').innerHTML = '';
+    // Clear any CMD outputs
+    document.getElementById('cmd-output').classList.add('d-none');
+    document.getElementById('nlp-cmd-output').classList.add('d-none');
   });
   </script>
 
