@@ -128,7 +128,7 @@
   
   <!-- Header with Icon -->
   <div class="header">
-    <img src="icon.jpg"/>
+    <img src="icon.jpg" class="icon"/> &nbsp;&nbsp;
     <h1 class="display-4">MedSegModelZoo Explorer</h1>
   </div>
   
@@ -2201,6 +2201,13 @@
     // Clear any CMD outputs
     document.getElementById('cmd-output').classList.add('d-none');
     document.getElementById('nlp-cmd-output').classList.add('d-none');
+  });
+  window.addEventListener("load", () => {
+    const headerText = document.querySelector(".display-4");
+    const iconImg = document.querySelector(".icon");
+    const fontSize = window.getComputedStyle(headerText).fontSize;
+    iconImg.style.height = fontSize;
+    iconImg.style.width = "auto"; // 保持宽高比
   });
   </script>
 
