@@ -1,0 +1,2162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MedSegModelZoo Explorer</title>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f8f9fa;
+      color: #212529;
+    }
+    
+    /* Header styling */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 50px;
+      margin-bottom: 50px;
+      position: relative;
+    }
+    
+    .header i {
+      font-size: 2.5rem;
+      margin-right: 15px;
+      color: #0d6efd;
+    }
+    
+    /* Floating Panels */
+    .floating-panel {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 350px;
+      max-width: 90%;
+      background-color: #ffffff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      z-index: 1050;
+      padding: 20px;
+      overflow-y: auto;
+      height: 80%;
+    }
+    
+    /* Category Panel */
+    #categoryPanel {
+      left: 20px;
+    }
+    
+    /* NLP Panel */
+    #nlpPanel {
+      right: 20px;
+    }
+    
+    /* Modal adjustments */
+    .modal-lg {
+      max-width: 80% !important;
+    }
+    
+    /* Enhance card appearance */
+    .card {
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    }
+    
+    /* Tooltip styling */
+    .tooltip-inner {
+      max-width: 200px;
+      text-align: center;
+      background-color: #0d6efd;
+      color: #fff;
+      font-size: 0.875rem;
+    }
+    
+    /* Scrollbar styling for panels */
+    .floating-panel::-webkit-scrollbar {
+      width: 8px;
+    }
+    .floating-panel::-webkit-scrollbar-thumb {
+      background-color: rgba(100, 116, 139, 0.5);
+      border-radius: 4px;
+    }
+    
+    /* Button styling */
+    .btn-category {
+      margin-bottom: 10px;
+    }
+    
+    /* Hide main content initially */
+    #mainContent {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  
+  <!-- Header with Icon -->
+  <div class="header">
+    <i class="bi bi-speedometer2"></i> <!-- Placeholder icon -->
+    <h1 class="display-4">MedSegModelZoo Explorer</h1>
+  </div>
+  
+  <!-- Main Content Area -->
+  <div class="container" id="mainContent">
+    <div class="row">
+      <!-- Dataset List -->
+      <div class="col-lg-8 mb-4">
+        <h2 class="h4 mb-3">Datasets</h2>
+        <div id="dataset-list" class="row g-3">
+          <!-- Dataset cards will be injected here -->
+        </div>
+        <div id="no-datasets" class="text-center text-muted mt-4 d-none">Please select a body part or enter a description to view related datasets.</div>
+      </div>
+
+      <!-- Dataset Details -->
+      <div id="dataset-info" class="col-lg-4 p-4 bg-white shadow rounded d-none">
+        <h4 id="dataset-title" class="mb-3">Dataset Information</h4>
+        <div id="dataset-details" class="mb-3" style="max-height: 400px; overflow-y: auto;">
+          <!-- Dataset details will be injected here -->
+        </div>
+        <button id="cmd-button" class="btn btn-primary w-100 mb-2">Show CMD</button>
+        <div id="cmd-output" class="alert alert-secondary d-none">cmd xx</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Panels -->
+  
+  <!-- Category Selection Panel -->
+  <div class="floating-panel" id="categoryPanel">
+    <h5 class="mb-3"><i class="bi bi-list-task me-2"></i> Select Category</h5>
+    <div class="accordion" id="bodyPartsAccordion">
+      <!-- Categories will be injected here -->
+    </div>
+  </div>
+  
+  <!-- Natural Language Input Panel -->
+  <div class="floating-panel" id="nlpPanel">
+    <h5 class="mb-3"><i class="bi bi-chat-dots me-2"></i> Natural Language Input</h5>
+    <input type="text" id="nlp-input" class="form-control mb-3" placeholder="Enter natural language description..." />
+    <div id="nlp-cmd-output" class="alert alert-secondary d-none">cmd -i </div>
+  </div>
+  
+  <!-- Bootstrap JS and dependencies -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+  // Dataset JSON
+  const datasetJSON = 
+  [
+    {
+        "Dataset": "Task001_BrainTumour",
+        "Framework": "nnunet_v1",
+        "Modality": "FLAIR MRI,T1 weighted MRI,T1Gd MRI,T2 weighted MRI",
+        "Input Channels": "4",
+        "Patch size": "[128, 128, 128]",
+        "Training spacing": "[1.0, 1.0, 1.0]",
+        "Train cases": "387",
+        "Test cases": "97",
+        "Category-EN": "{'0': 'background', '1': 'Edema', '2': 'Non-enhancing tumor', '3': 'Enhancing tumor'}",
+        "Category-CN": "{'0': '背景', '1': '水肿', '2': '非强化肿瘤', '3': '强化肿瘤'}",
+        "Dice nnunet": "0.7334",
+        "Dice base": "0.726",
+        "Dice large": "0.7303",
+        "Dice huge": "0.7309",
+        "Dice base_ft": "0.73",
+        "Dice large_ft": "0.7362",
+        "Dice huge_ft": "0.7362"
+    },
+    {
+        "Dataset": "Task002_Heart",
+        "Framework": "nnunet_v1",
+        "Modality": "MRI",
+        "Input Channels": "1",
+        "Patch size": "[80, 192, 160]",
+        "Training spacing": "[1.3700000047683716, 1.25, 1.25]",
+        "Train cases": "16",
+        "Test cases": "4",
+        "Category-EN": "{'0': 'background', '1': 'Left atrium'}",
+        "Category-CN": "{'0': '背景', '1': '左心房'}",
+        "Dice nnunet": "0.939",
+        "Dice base": "0.9379",
+        "Dice large": "0.9382",
+        "Dice huge": "0.9382",
+        "Dice base_ft": "0.9397",
+        "Dice large_ft": "0.9397",
+        "Dice huge_ft": "0.9387"
+    },
+    {
+        "Dataset": "Task003_Liver",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[128, 128, 128]",
+        "Training spacing": "[1.0, 0.767578125, 0.767578125]",
+        "Train cases": "104",
+        "Test cases": "27",
+        "Category-EN": "{'0': 'background', '1': 'Liver', '2': 'Liver tumor'}",
+        "Category-CN": "{'0': '背景', '1': '肝', '2': '肝肿瘤'}",
+        "Dice nnunet": "0.8338",
+        "Dice base": "0.8238",
+        "Dice large": "0.8399",
+        "Dice huge": "0.8401",
+        "Dice base_ft": "0.8501",
+        "Dice large_ft": "0.8423",
+        "Dice huge_ft": "0.8491"
+    },
+    {
+        "Dataset": "Task004_Hippocampus",
+        "Framework": "nnunet_v1",
+        "Modality": "MRI",
+        "Input Channels": "1",
+        "Patch size": "[40, 56, 40]",
+        "Training spacing": "[1.0, 1.0, 1.0]",
+        "Train cases": "208",
+        "Test cases": "52",
+        "Category-EN": "{'0': 'background', '1': 'Anterior hippocampus', '2': 'Posterior hippocampus'}",
+        "Category-CN": "{'0': '背景', '1': '海马前部', '2': '海马后部'}",
+        "Dice nnunet": "0.8923",
+        "Dice base": "0.8892",
+        "Dice large": "0.8919",
+        "Dice huge": "0.8935",
+        "Dice base_ft": "0.8896",
+        "Dice large_ft": "0.8913",
+        "Dice huge_ft": "0.8919"
+    },
+    {
+        "Dataset": "Task005_Prostate",
+        "Framework": "nnunet_v1",
+        "Modality": "T2 MRI,ADC MRI",
+        "Input Channels": "2",
+        "Patch size": "[20, 320, 256]",
+        "Training spacing": "[3.5999999046325684, 0.625, 0.625]",
+        "Train cases": "25",
+        "Test cases": "7",
+        "Category-EN": "{'0': 'background', '1': 'Prostate peripheral zone', '2': 'Vertebrae T9'}",
+        "Category-CN": "{'0': '背景', '1': '前列腺外周带', '2': '胸椎T9'}",
+        "Dice nnunet": "0.814",
+        "Dice base": "0.7852",
+        "Dice large": "0.8004",
+        "Dice huge": "0.796",
+        "Dice base_ft": "0.8112",
+        "Dice large_ft": "0.8161",
+        "Dice huge_ft": "0.8153"
+    },
+    {
+        "Dataset": "Task006_Lung",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[80, 192, 160]",
+        "Training spacing": "[1.244979977607727, 0.78515625, 0.78515625]",
+        "Train cases": "50",
+        "Test cases": "13",
+        "Category-EN": "{'0': 'background', '1': 'Lung cancer'}",
+        "Category-CN": "{'0': '背景', '1': '肺癌'}",
+        "Dice nnunet": "0.7132",
+        "Dice base": "0.7003",
+        "Dice large": "0.625",
+        "Dice huge": "0.6197",
+        "Dice base_ft": "0.7343",
+        "Dice large_ft": "0.704",
+        "Dice huge_ft": "0.7259"
+    },
+    {
+        "Dataset": "Task007_Pancreas",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[40, 224, 224]",
+        "Training spacing": "[2.5, 0.8027340173721313, 0.8027340173721313]",
+        "Train cases": "224",
+        "Test cases": "57",
+        "Category-EN": "{'0': 'background', '1': 'Pancreas', '2': 'Pancreatic tumor mass'}",
+        "Category-CN": "{'0': '背景', '1': '胰腺', '2': '胰腺肿瘤块'}",
+        "Dice nnunet": "0.647",
+        "Dice base": "0.6607",
+        "Dice large": "0.6641",
+        "Dice huge": "0.6629",
+        "Dice base_ft": "0.6791",
+        "Dice large_ft": "0.6746",
+        "Dice huge_ft": "0.6839"
+    },
+    {
+        "Dataset": "Task008_HepaticVessel",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[64, 192, 192]",
+        "Training spacing": "[1.5, 0.7988280057907104, 0.7988280057907104]",
+        "Train cases": "242",
+        "Test cases": "61",
+        "Category-EN": "{'0': 'background', '1': 'Hepatic vessels', '2': 'Liver tumor'}",
+        "Category-CN": "{'0': '背景', '1': '肝血管', '2': '肝肿瘤'}",
+        "Dice nnunet": "0.6988",
+        "Dice base": "0.7075",
+        "Dice large": "0.7079",
+        "Dice huge": "0.7123",
+        "Dice base_ft": "0.7047",
+        "Dice large_ft": "0.7083",
+        "Dice huge_ft": "0.7137"
+    },
+    {
+        "Dataset": "Task009_Spleen",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[64, 192, 160]",
+        "Training spacing": "[1.6000100374221802, 0.7929689884185791, 0.7929689884185791]",
+        "Train cases": "32",
+        "Test cases": "9",
+        "Category-EN": "{'0': 'background', '1': 'Spleen'}",
+        "Category-CN": "{'0': '背景', '1': '脾脏'}",
+        "Dice nnunet": "0.9553",
+        "Dice base": "0.964",
+        "Dice large": "0.9514",
+        "Dice huge": "0.8759",
+        "Dice base_ft": "0.9681",
+        "Dice large_ft": "0.969",
+        "Dice huge_ft": "0.969"
+    },
+    {
+        "Dataset": "Task010_Colon",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[56, 192, 160]",
+        "Training spacing": "[3.0, 0.78125, 0.78125]",
+        "Train cases": "100",
+        "Test cases": "26",
+        "Category-EN": "{'0': 'background', '1': 'Colon cancer primaries'}",
+        "Category-CN": "{'0': '背景', '1': '结肠癌原发灶'}",
+        "Dice nnunet": "0.4688",
+        "Dice base": "0.4433",
+        "Dice large": "0.4634",
+        "Dice huge": "0.4136",
+        "Dice base_ft": "0.4837",
+        "Dice large_ft": "0.5163",
+        "Dice huge_ft": "0.4999"
+    },
+    {
+        "Dataset": "Task011_BTCV",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[48, 192, 192]",
+        "Training spacing": "[3.0, 0.7578124403953552, 0.7578124403953552]",
+        "Train cases": "24",
+        "Test cases": "6",
+        "Category-EN": "{'0': 'background', '1': 'Spleen', '2': 'Right kidney', '3': 'Left kidney', '4': 'Gallbladder', '5': 'Esophagus', '6': 'Liver', '7': 'Stomach', '8': 'Aorta', '9': 'Inferior vena cava', '10': 'Portal and splenic veins', '11': 'Pancreas', '12': 'Right adrenal gland', '13': 'Left adrenal gland'}",
+        "Category-CN": "{'0': '背景', '1': '脾脏', '2': '右肾', '3': '左肾', '4': '胆囊', '5': '食管', '6': '肝', '7': '胃', '8': '主动脉', '9': '下腔静脉', '10': '门静脉和脾静脉', '11': '胰腺', '12': '右肾上腺', '13': '左肾上腺'}",
+        "Dice nnunet": "0.8424",
+        "Dice base": "0.8425",
+        "Dice large": "0.845",
+        "Dice huge": "0.8504",
+        "Dice base_ft": "0.8504",
+        "Dice large_ft": "0.862",
+        "Dice huge_ft": "0.8584"
+    },
+    {
+        "Dataset": "Task012_BTCV_Cervix",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[64, 192, 160]",
+        "Training spacing": "[2.5, 0.9765625, 0.9765625]",
+        "Train cases": "24",
+        "Test cases": "6",
+        "Category-EN": "{'0': 'background', '1': 'Bladder', '2': 'Uterus', '3': 'Rectum', '4': ' small bowel'}",
+        "Category-CN": "{'0': '背景', '1': '膀胱', '2': '子宫', '3': '直肠', '4': '背景'}",
+        "Dice nnunet": "0.6881",
+        "Dice base": "0.6718",
+        "Dice large": "0.6667",
+        "Dice huge": "0.6689",
+        "Dice base_ft": "0.7125",
+        "Dice large_ft": "0.7116",
+        "Dice huge_ft": "0.7227"
+    },
+    {
+        "Dataset": "Task013_ACDC",
+        "Framework": "nnunet_v1",
+        "Modality": "MRI",
+        "Input Channels": "1",
+        "Patch size": "[20, 256, 224]",
+        "Training spacing": "[5.0, 1.5625, 1.5625]",
+        "Train cases": "160",
+        "Test cases": "40",
+        "Category-EN": "{'0': 'background', '1': 'Right ventricle', '2': 'Myocardium', '3': 'Left ventricular myocardium'}",
+        "Category-CN": "{'0': '背景', '1': '右心室', '2': '心肌', '3': '左心室心肌'}",
+        "Dice nnunet": "0.9226",
+        "Dice base": "0.9206",
+        "Dice large": "0.9269",
+        "Dice huge": "0.9266",
+        "Dice base_ft": "0.9255",
+        "Dice large_ft": "0.9279",
+        "Dice huge_ft": "0.9281"
+    },
+    {
+        "Dataset": "Task019_BraTS21",
+        "Framework": "nnunet_v1",
+        "Modality": "T1 MRI,T1ce MRI,T2 MRI,FLAIR MRI",
+        "Input Channels": "4",
+        "Patch size": "[128, 128, 128]",
+        "Training spacing": "[1.0, 1.0, 1.0]",
+        "Train cases": "1000",
+        "Test cases": "251",
+        "Category-EN": "{'0': 'background', '1': 'Edema', '2': 'Non-enhancing tumor', '3': 'Enhancing tumor'}",
+        "Category-CN": "{'0': '背景', '1': '水肿', '2': '非强化肿瘤', '3': '强化肿瘤'}",
+        "Dice nnunet": "0.8455",
+        "Dice base": "0.8463",
+        "Dice large": "0.8471",
+        "Dice huge": "0.8482",
+        "Dice base_ft": "0.8457",
+        "Dice large_ft": "0.8497",
+        "Dice huge_ft": "0.8507"
+    },
+    {
+        "Dataset": "Task020_AbdomenCT1K",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[96, 160, 160]",
+        "Training spacing": "[0.800000011920929, 0.7910159826278687, 0.7910159826278687]",
+        "Train cases": "800",
+        "Test cases": "200",
+        "Category-EN": "{'0': 'background', '1': 'Liver', '2': 'Kidney', '3': 'Spleen', '4': 'Pancreas'}",
+        "Category-CN": "{'0': '背景', '1': '肝', '2': '肾', '3': '脾脏', '4': '胰腺'}",
+        "Dice nnunet": "0.9528",
+        "Dice base": "0.9534",
+        "Dice large": "0.9554",
+        "Dice huge": "0.9539",
+        "Dice base_ft": "0.9526",
+        "Dice large_ft": "0.9557",
+        "Dice huge_ft": "0.9562"
+    },
+    {
+        "Dataset": "Task021_KiTS2021",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[128, 128, 128]",
+        "Training spacing": "[0.78126, 0.78125, 0.78125]",
+        "Train cases": "240",
+        "Test cases": "60",
+        "Category-EN": "{'0': 'background', '1': 'Kidney', '2': 'Kidney tumor', '3': 'Kidney cyst'}",
+        "Category-CN": "{'0': '背景', '1': '肾', '2': '肾肿瘤', '3': '肾囊肿'}",
+        "Dice nnunet": "0.7544",
+        "Dice base": "0.7322",
+        "Dice large": "0.7476",
+        "Dice huge": "0.7655",
+        "Dice base_ft": "0.7707",
+        "Dice large_ft": "0.7791",
+        "Dice huge_ft": "0.7891"
+    },
+    {
+        "Dataset": "Task023_FLARE22",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[40, 224, 192]",
+        "Training spacing": "[2.5, 0.7939454913139343, 0.7939454913139343]",
+        "Train cases": "56",
+        "Test cases": "14",
+        "Category-EN": "{'0': 'background', '1': 'Liver', '2': 'Right kidney', '3': 'Spleen', '4': 'Pancreas', '5': 'Aorta', '6': 'Inferior vena cava', '7': 'Right adrenal gland', '8': 'Left adrenal gland', '9': 'Gallbladder', '10': 'Esophagus', '11': 'Stomach', '12': 'Duodenum', '13': 'Left kidney'}",
+        "Category-CN": "{'0': '背景', '1': '肝', '2': '右肾', '3': '脾脏', '4': '胰腺', '5': '主动脉', '6': '下腔静脉', '7': '右肾上腺', '8': '左肾上腺', '9': '胆囊', '10': '食管', '11': '胃', '12': '十二指肠', '13': '左肾'}",
+        "Dice nnunet": "0.8621",
+        "Dice base": "0.87",
+        "Dice large": "0.8776",
+        "Dice huge": "0.8748",
+        "Dice base_ft": "0.8752",
+        "Dice large_ft": "0.8807",
+        "Dice huge_ft": "0.891"
+    },
+    {
+        "Dataset": "Task029_LITS",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[128, 128, 128]",
+        "Training spacing": "[1.0, 0.767578125, 0.767578125]",
+        "Train cases": "104",
+        "Test cases": "27",
+        "Category-EN": "{'0': 'background', '1': 'Liver', '2': 'Liver tumor'}",
+        "Category-CN": "{'0': '背景', '1': '肝', '2': '肝肿瘤'}",
+        "Dice nnunet": "0.8284",
+        "Dice base": "0.8296",
+        "Dice large": "0.8462",
+        "Dice huge": "0.8457",
+        "Dice base_ft": "0.8506",
+        "Dice large_ft": "0.8596",
+        "Dice huge_ft": "0.8474"
+    },
+    {
+        "Dataset": "Task034_Instance22",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[16, 320, 320]",
+        "Training spacing": "[4.999972629547119, 0.45250000059604645, 0.45250000059604645]",
+        "Train cases": "80",
+        "Test cases": "20",
+        "Category-EN": "{'0': 'background', '1': 'Intracranial hemorrhage'}",
+        "Category-CN": "{'0': '背景', '1': '颅内出血'}",
+        "Dice nnunet": "0.6749",
+        "Dice base": "0.6861",
+        "Dice large": "0.6953",
+        "Dice huge": "0.6955",
+        "Dice base_ft": "0.6755",
+        "Dice large_ft": "0.6996",
+        "Dice huge_ft": "0.7027"
+    },
+    {
+        "Dataset": "Task036_KiPA22",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[160, 128, 112]",
+        "Training spacing": "[0.6328129768371582, 0.6328129768371582, 0.6328129768371582]",
+        "Train cases": "56",
+        "Test cases": "14",
+        "Category-EN": "{'0': 'background', '1': 'Renal vein', '2': 'Kidney', '3': 'Renal artery', '4': 'Kidney tumor'}",
+        "Category-CN": "{'0': '背景', '1': '肾静脉', '2': '肾', '3': '肾动脉', '4': '肾肿瘤'}",
+        "Dice nnunet": "0.901",
+        "Dice base": "0.9004",
+        "Dice large": "0.9016",
+        "Dice huge": "0.9",
+        "Dice base_ft": "0.9031",
+        "Dice large_ft": "0.9029",
+        "Dice huge_ft": "0.9043"
+    },
+    {
+        "Dataset": "Task037_CHAOS_Task_3_5_Variant1",
+        "Framework": "nnunet_v1",
+        "Modality": "MRI,MRI",
+        "Input Channels": "2",
+        "Patch size": "[32, 192, 256]",
+        "Training spacing": "[7.529999828338624, 1.62109375, 1.62109375]",
+        "Train cases": "32",
+        "Test cases": "8",
+        "Category-EN": "{'0': 'background', '1': 'Liver', '2': 'Right kidney', '3': 'Left kidney', '4': 'Spleen'}",
+        "Category-CN": "{'0': '背景', '1': '肝', '2': '右肾', '3': '左肾', '4': '脾脏'}",
+        "Dice nnunet": "0.8619",
+        "Dice base": "0.8474",
+        "Dice large": "0.8629",
+        "Dice huge": "0.8588",
+        "Dice base_ft": "0.8708",
+        "Dice large_ft": "0.8727",
+        "Dice huge_ft": "0.8744"
+    },
+    {
+        "Dataset": "Task039_Parse22",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[96, 160, 160]",
+        "Training spacing": "[1.0, 0.654296875, 0.654296875]",
+        "Train cases": "80",
+        "Test cases": "20",
+        "Category-EN": "{'0': 'background', '1': 'Pulmonary artery'}",
+        "Category-CN": "{'0': '背景', '1': '肺动脉'}",
+        "Dice nnunet": "0.8695",
+        "Dice base": "0.8691",
+        "Dice large": "0.8663",
+        "Dice huge": "0.8661",
+        "Dice base_ft": "0.8692",
+        "Dice large_ft": "0.8687",
+        "Dice huge_ft": "0.8681"
+    },
+    {
+        "Dataset": "Task040_ATM22",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[128, 160, 112]",
+        "Training spacing": "[0.78125, 0.5, 0.78125]",
+        "Train cases": "240",
+        "Test cases": "60",
+        "Category-EN": "{'0': 'background', '1': 'Airway'}",
+        "Category-CN": "{'0': '背景', '1': '气道'}",
+        "Dice nnunet": "0.9108",
+        "Dice base": "0.9108",
+        "Dice large": "0.911",
+        "Dice huge": "0.9116",
+        "Dice base_ft": "0.9148",
+        "Dice large_ft": "0.9178",
+        "Dice huge_ft": "0.9174"
+    },
+    {
+        "Dataset": "Task041_ISLES2022",
+        "Framework": "nnunet_v1",
+        "Modality": "ADC MRI,DWI MRI",
+        "Input Channels": "2",
+        "Patch size": "[80, 96, 80]",
+        "Training spacing": "[2.0, 2.0, 2.0]",
+        "Train cases": "200",
+        "Test cases": "50",
+        "Category-EN": "{'0': 'background', '1': 'Ischemic stroke'}",
+        "Category-CN": "{'0': '背景', '1': '缺血性中风'}",
+        "Dice nnunet": "0.7836",
+        "Dice base": "0.7802",
+        "Dice large": "0.7919",
+        "Dice huge": "0.7929",
+        "Dice base_ft": "0.7866",
+        "Dice large_ft": "0.7878",
+        "Dice huge_ft": "0.7898"
+    },
+    {
+        "Dataset": "Task044_CrossMoDA23",
+        "Framework": "nnunet_v1",
+        "Modality": "MRI",
+        "Input Channels": "1",
+        "Patch size": "[32, 256, 224]",
+        "Training spacing": "[1.5, 0.625, 0.625]",
+        "Train cases": "181",
+        "Test cases": "46",
+        "Category-EN": "{'0': 'background', '1': 'Intra vestibular schwannoma', '2': 'Extra vestibular schwannoma', '3': 'Cochlea'}",
+        "Category-CN": "{'0': '背景', '1': '内位前庭神经瘤', '2': '额外位前庭神经瘤', '3': '耳蜗'}",
+        "Dice nnunet": "0.796",
+        "Dice base": "0.7934",
+        "Dice large": "0.7945",
+        "Dice huge": "0.7915",
+        "Dice base_ft": "0.7966",
+        "Dice large_ft": "0.7955",
+        "Dice huge_ft": "0.7987"
+    },
+    {
+        "Dataset": "Task044_KiTS23",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[128, 128, 128]",
+        "Training spacing": "[1.0, 0.78125, 0.78125]",
+        "Train cases": "391",
+        "Test cases": "98",
+        "Category-EN": "{'0': 'background', '1': 'Kidney', '2': 'Kidney tumor', '3': 'Kidney cyst'}",
+        "Category-CN": "{'0': '背景', '1': '肾', '2': '肾肿瘤', '3': '肾囊肿'}",
+        "Dice nnunet": "0.7545",
+        "Dice base": "0.7591",
+        "Dice large": "0.7554",
+        "Dice huge": "0.7576",
+        "Dice base_ft": "0.7704",
+        "Dice large_ft": "0.7905",
+        "Dice huge_ft": "0.7983"
+    },
+    {
+        "Dataset": "Task050_LAScarQS22_task1",
+        "Framework": "nnunet_v1",
+        "Modality": "LGE MRI",
+        "Input Channels": "1",
+        "Patch size": "[20, 288, 288]",
+        "Training spacing": "[2.5, 0.625, 0.625]",
+        "Train cases": "48",
+        "Test cases": "12",
+        "Category-EN": "{'0': 'background', '1': 'Left atrial scar', '2': 'Left atrium'}",
+        "Category-CN": "{'0': '背景', '1': '左心房疤痕', '2': '左心房'}",
+        "Dice nnunet": "0.7155",
+        "Dice base": "0.7194",
+        "Dice large": "0.7104",
+        "Dice huge": "0.713",
+        "Dice base_ft": "0.7274",
+        "Dice large_ft": "0.716",
+        "Dice huge_ft": "0.7144"
+    },
+    {
+        "Dataset": "Task051_AMOS_CT",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[64, 160, 160]",
+        "Training spacing": "[2.0, 0.6845703125, 0.6845703125]",
+        "Train cases": "240",
+        "Test cases": "60",
+        "Category-EN": "{'0': 'background', '1': 'Spleen', '10': 'Pancreas', '11': 'Right adrenal gland', '12': 'Left adrenal gland', '13': 'Duodenum', '14': 'Bladder', '15': 'Prostate/Uterus', '2': 'Right kidney', '3': 'Left kidney', '4': 'Gallbladder', '5': 'Esophagus', '6': 'Liver', '7': 'Stomach', '8': 'Aorta', '9': 'Postcaval vein'}",
+        "Category-CN": "{'0': '背景', '1': '脾脏', '10': '胰腺', '11': '右肾上腺', '12': '左肾上腺', '13': '十二指肠', '14': '膀胱', '15': '前列腺/子宫', '2': '右肾', '3': '左肾', '4': '胆囊', '5': '食管', '6': '肝', '7': '胃', '8': '主动脉', '9': '后腔静脉'}",
+        "Dice nnunet": "0.9012",
+        "Dice base": "0.8995",
+        "Dice large": "0.9069",
+        "Dice huge": "0.9048",
+        "Dice base_ft": "0.9033",
+        "Dice large_ft": "0.9085",
+        "Dice huge_ft": "0.9124"
+    },
+    {
+        "Dataset": "Task051_LAScarQS22_task2",
+        "Framework": "nnunet_v1",
+        "Modality": "LGE MRI",
+        "Input Channels": "1",
+        "Patch size": "[40, 256, 224]",
+        "Training spacing": "[1.0, 0.625, 0.625]",
+        "Train cases": "104",
+        "Test cases": "26",
+        "Category-EN": "{'0': 'background', '1': 'Left atrium'}",
+        "Category-CN": "{'0': '背景', '1': '左心房'}",
+        "Dice nnunet": "0.9176",
+        "Dice base": "0.9201",
+        "Dice large": "0.9204",
+        "Dice huge": "0.9208",
+        "Dice base_ft": "0.9202",
+        "Dice large_ft": "0.9209",
+        "Dice huge_ft": "0.9206"
+    },
+    {
+        "Dataset": "Task052_AMOS_MR",
+        "Framework": "nnunet_v1",
+        "Modality": "MRI",
+        "Input Channels": "1",
+        "Patch size": "[48, 160, 224]",
+        "Training spacing": "[3.0, 1.1875, 1.1875]",
+        "Train cases": "48",
+        "Test cases": "12",
+        "Category-EN": "{'0': 'background', '1': 'Spleen', '10': 'Pancreas', '11': 'Right adrenal gland', '12': 'Left adrenal gland', '13': 'Duodenum', '14': 'Bladder', '15': 'Prostate/Uterus', '2': 'Right kidney', '3': 'Left kidney', '4': 'Gallbladder', '5': 'Esophagus', '6': 'Liver', '7': 'Stomach', '8': 'Aorta', '9': 'Postcaval vein'}",
+        "Category-CN": "{'0': '背景', '1': '脾脏', '10': '胰腺', '11': '右肾上腺', '12': '左肾上腺', '13': '十二指肠', '14': '膀胱', '15': '前列腺/子宫', '2': '右肾', '3': '左肾', '4': '胆囊', '5': '食管', '6': '肝', '7': '胃', '8': '主动脉', '9': '后腔静脉'}",
+        "Dice nnunet": "0.8754",
+        "Dice base": "0.8695",
+        "Dice large": "0.8719",
+        "Dice huge": "0.8738",
+        "Dice base_ft": "0.8763",
+        "Dice large_ft": "0.8813",
+        "Dice huge_ft": "0.8812"
+    },
+    {
+        "Dataset": "Task053_AMOS_Task2",
+        "Framework": "nnunet_v1",
+        "Modality": "MRI",
+        "Input Channels": "1",
+        "Patch size": "[64, 160, 160]",
+        "Training spacing": "[2.0, 0.712890625, 0.712890625]",
+        "Train cases": "288",
+        "Test cases": "72",
+        "Category-EN": "{'0': 'background', '1': 'Spleen', '10': 'Pancreas', '11': 'Right adrenal gland', '12': 'Left adrenal gland', '13': 'Duodenum', '14': 'Bladder', '15': 'Prostate/Uterus', '2': 'Right kidney', '3': 'Left kidney', '4': 'Gallbladder', '5': 'Esophagus', '6': 'Liver', '7': 'Stomach', '8': 'Aorta', '9': 'Postcaval vein'}",
+        "Category-CN": "{'0': '背景', '1': '脾脏', '10': '胰腺', '11': '右肾上腺', '12': '左肾上腺', '13': '十二指肠', '14': '膀胱', '15': '前列腺/子宫', '2': '右肾', '3': '左肾', '4': '胆囊', '5': '食管', '6': '肝', '7': '胃', '8': '主动脉', '9': '后腔静脉'}",
+        "Dice nnunet": "0.8956",
+        "Dice base": "0.8989",
+        "Dice large": "0.9037",
+        "Dice huge": "0.9025",
+        "Dice base_ft": "0.8978",
+        "Dice large_ft": "0.906",
+        "Dice huge_ft": "0.9064"
+    },
+    {
+        "Dataset": "Task083_VerSe2020",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[160, 112, 112]",
+        "Training spacing": "[1.0, 0.93359375, 1.0]",
+        "Train cases": "280",
+        "Test cases": "71",
+        "Category-EN": "{'0': 'background', '1': 'Vertebrae C1', '10': 'Vertebrae T2', '11': 'Vertebrae T3', '12': 'Vertebrae T4', '13': 'Vertebrae T5', '14': 'Vertebrae T6', '15': 'Vertebrae T7', '16': 'Vertebrae T8', '17': 'Vertebrae T10', '18': 'Vertebrae T11', '19': 'Vertebrae T12', '2': 'Vertebrae C2', '20': 'Vertebrae L1', '21': 'Vertebrae L2', '22': 'Vertebrae L3', '23': 'Vertebrae L4', '24': 'Vertebrae L5', '25': 'Vertebrae L6', '26': 'Sacrum', '27': 'cocygis', '28': 'T13', '3': 'Vertebrae C3', '4': 'Vertebrae C4', '5': 'Vertebrae C5', '6': 'Vertebrae C6', '7': 'Vertebrae C7', '8': 'Vertebrae T1', '9': 'Vertebrae T13'}",
+        "Category-CN": "{'0': '背景', '1': '颈椎C1', '10': '胸椎T2', '11': '胸椎T3', '12': '胸椎T4', '13': '胸椎T5', '14': '胸椎T6', '15': '胸椎T7', '16': '胸椎T8', '17': '胸椎T10', '18': '胸椎T11', '19': '胸椎T12', '2': '颈椎C2', '20': '腰椎L1', '21': '腰椎L2', '22': '腰椎L3', '23': '腰椎L4', '24': '腰椎L5', '25': '腰椎L6', '26': '骶骨', '27': '背景', '28': '背景', '3': '颈椎C3', '4': '颈椎C4', '5': '颈椎C5', '6': '颈椎C6', '7': '颈椎C7', '8': '胸椎T1', '9': '胸椎T13'}",
+        "Dice nnunet": "0.7198",
+        "Dice base": "0.747",
+        "Dice large": "0.7458",
+        "Dice huge": "0.7438",
+        "Dice base_ft": "0.7467",
+        "Dice large_ft": "0.7596",
+        "Dice huge_ft": "0.758"
+    },
+    {
+        "Dataset": "Task103_ADAM2020",
+        "Framework": "nnunet_v1",
+        "Modality": "TOF MRI",
+        "Input Channels": "1",
+        "Patch size": "[56, 224, 192]",
+        "Training spacing": "[0.5000004172325134, 0.3571428656578064, 0.3571428656578064]",
+        "Train cases": "90",
+        "Test cases": "23",
+        "Category-EN": "{'0': 'background', '1': 'Brain aneurysm', '2': 'Treated aneurysm'}",
+        "Category-CN": "{'0': '背景', '1': '动脉瘤', '2': '愈后动脉瘤'}",
+        "Dice nnunet": "0.5064",
+        "Dice base": "0.56",
+        "Dice large": "0.6118",
+        "Dice huge": "0.5927",
+        "Dice base_ft": "0.6524",
+        "Dice large_ft": "0.6883",
+        "Dice huge_ft": "0.6702"
+    },
+    {
+        "Dataset": "Task104_Colorectal_Liver_Metastases",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[64, 192, 192]",
+        "Training spacing": "[1.5, 0.78125, 0.78125]",
+        "Train cases": "157",
+        "Test cases": "40",
+        "Category-EN": "{'0': 'background', '1': 'Liver', '2': 'Liver tumor'}",
+        "Category-CN": "{'0': '背景', '1': '肝', '2': '肝肿瘤'}",
+        "Dice nnunet": "0.8485",
+        "Dice base": "0.8419",
+        "Dice large": "0.8475",
+        "Dice huge": "0.8538",
+        "Dice base_ft": "0.8501",
+        "Dice large_ft": "0.8529",
+        "Dice huge_ft": "0.8532"
+    },
+    {
+        "Dataset": "Task105_DICOM_LIDC_IDRI_Nodules",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[80, 192, 160]",
+        "Training spacing": "[1.3750000596046448, 0.6986093819141388, 0.6986093819141388]",
+        "Train cases": "814",
+        "Test cases": "204",
+        "Category-EN": "{'0': 'background', '1': 'Lymph nodes'}",
+        "Category-CN": "{'0': '背景', '1': '淋巴结'}",
+        "Dice nnunet": "0.4999",
+        "Dice base": "0.5555",
+        "Dice large": "0.5601",
+        "Dice huge": "0.5545",
+        "Dice base_ft": "0.6146",
+        "Dice large_ft": "0.6198",
+        "Dice huge_ft": "0.6384"
+    },
+    {
+        "Dataset": "Task106_AIIB2023",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[128, 128, 128]",
+        "Training spacing": "[0.7041015625, 0.5, 0.7041015625]",
+        "Train cases": "96",
+        "Test cases": "24",
+        "Category-EN": "{'0': 'background', '1': 'Airway'}",
+        "Category-CN": "{'0': '背景', '1': '气道'}",
+        "Dice nnunet": "0.9353",
+        "Dice base": "0.9353",
+        "Dice large": "0.9354",
+        "Dice huge": "0.9362",
+        "Dice base_ft": "0.9359",
+        "Dice large_ft": "0.9377",
+        "Dice huge_ft": "0.9391"
+    },
+    {
+        "Dataset": "Task107_HCC-TACE-Seg",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[40, 224, 224]",
+        "Training spacing": "[2.5, 0.78125, 0.78125]",
+        "Train cases": "179",
+        "Test cases": "45",
+        "Category-EN": "{'0': 'background', '1': 'Liver', '2': 'Liver tumor', '3': 'Portal vein', '4': 'Aorta'}",
+        "Category-CN": "{'0': '背景', '1': '肝', '2': '肝肿瘤', '3': '门静脉', '4': '主动脉'}",
+        "Dice nnunet": "0.6121",
+        "Dice base": "0.6132",
+        "Dice large": "0.6193",
+        "Dice huge": "0.6152",
+        "Dice base_ft": "0.623",
+        "Dice large_ft": "0.6365",
+        "Dice huge_ft": "0.6342"
+    },
+    {
+        "Dataset": "Task108_ISBI-MR-Prostate-2013",
+        "Framework": "nnunet_v1",
+        "Modality": "T2 weighted MRI",
+        "Input Channels": "1",
+        "Patch size": "[24, 256, 256]",
+        "Training spacing": "[3.0, 0.5, 0.5]",
+        "Train cases": "63",
+        "Test cases": "16",
+        "Category-EN": "{'0': 'background', '1': 'Prostate', '2': 'Prostate peripheral zone'}",
+        "Category-CN": "{'0': '背景', '1': '前列腺', '2': '前列腺外周带'}",
+        "Dice nnunet": "0.8463",
+        "Dice base": "0.8255",
+        "Dice large": "0.8219",
+        "Dice huge": "0.8205",
+        "Dice base_ft": "0.8315",
+        "Dice large_ft": "0.8305",
+        "Dice huge_ft": "0.8433"
+    },
+    {
+        "Dataset": "Task109_SMILE-UHURA2023",
+        "Framework": "nnunet_v1",
+        "Modality": "TOF MRI",
+        "Input Channels": "1",
+        "Patch size": "[224, 64, 160]",
+        "Training spacing": "[0.30000001192092896, 0.29999256134033203, 0.30000001192092896]",
+        "Train cases": "9",
+        "Test cases": "3",
+        "Category-EN": "{'0': 'background', '1': 'Cerebral artery'}",
+        "Category-CN": "{'0': '背景', '1': '脑动脉'}",
+        "Dice nnunet": "0.8271",
+        "Dice base": "0.8363",
+        "Dice large": "0.8333",
+        "Dice huge": "0.8242",
+        "Dice base_ft": "0.8385",
+        "Dice large_ft": "0.8366",
+        "Dice huge_ft": "0.829"
+    },
+    {
+        "Dataset": "Task110_ISPY1-Tumor-SEG-Radiomics",
+        "Framework": "nnunet_v1",
+        "Modality": "DCE MRI,DCE MRI,DCE MRI",
+        "Input Channels": "3",
+        "Patch size": "[96, 160, 160]",
+        "Training spacing": "[1.0, 1.0, 1.0]",
+        "Train cases": "128",
+        "Test cases": "33",
+        "Category-EN": "{'0': 'background', '1': 'Breast tumor'}",
+        "Category-CN": "{'0': '背景', '1': '乳腺肿瘤'}",
+        "Dice nnunet": "0.7161",
+        "Dice base": "0.7202",
+        "Dice large": "0.7383",
+        "Dice huge": "0.7275",
+        "Dice base_ft": "0.7342",
+        "Dice large_ft": "0.72",
+        "Dice huge_ft": "0.7339"
+    },
+    {
+        "Dataset": "Task111_LUAD-CT-Survival",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[40, 224, 192]",
+        "Training spacing": "[3.6750000000000003, 0.7119140625, 0.7119140625]",
+        "Train cases": "32",
+        "Test cases": "8",
+        "Category-EN": "{'0': 'background', '1': 'Lung adenocarcinoma'}",
+        "Category-CN": "{'0': '背景', '1': '肺腺癌'}",
+        "Dice nnunet": "0.6899",
+        "Dice base": "0.5832",
+        "Dice large": "0.6717",
+        "Dice huge": "0.6512",
+        "Dice base_ft": "0.7236",
+        "Dice large_ft": "0.74",
+        "Dice huge_ft": "0.7389"
+    },
+    {
+        "Dataset": "Task112_PROSTATEx-Seg-HiRes",
+        "Framework": "nnunet_v1",
+        "Modality": "T2 weighted MRI",
+        "Input Channels": "1",
+        "Patch size": "[16, 320, 320]",
+        "Training spacing": "[3.0, 0.5, 0.5]",
+        "Train cases": "52",
+        "Test cases": "14",
+        "Category-EN": "{'0': 'background', '1': 'Prostate'}",
+        "Category-CN": "{'0': '背景', '1': '前列腺'}",
+        "Dice nnunet": "0.9387",
+        "Dice base": "0.9378",
+        "Dice large": "0.9379",
+        "Dice huge": "0.9335",
+        "Dice base_ft": "0.9387",
+        "Dice large_ft": "0.9383",
+        "Dice huge_ft": "0.9401"
+    },
+    {
+        "Dataset": "Task113_PROSTATEx-Seg-Zones",
+        "Framework": "nnunet_v1",
+        "Modality": "T2 weighted MRI",
+        "Input Channels": "1",
+        "Patch size": "[16, 320, 320]",
+        "Training spacing": "[3.0, 0.5, 0.5]",
+        "Train cases": "78",
+        "Test cases": "20",
+        "Category-EN": "{'0': 'background', '1': 'Prostate peripheral zone', '2': 'Prostate transition zone', '3': 'Prostatic urethra', '4': 'Prostate anterior fibromuscular stroma'}",
+        "Category-CN": "{'0': '背景', '1': '前列腺外周带', '2': '前列腺移行带', '3': '前列腺尿道', '4': '前列腺前纤维肌肉组织'}",
+        "Dice nnunet": "0.7535",
+        "Dice base": "0.7446",
+        "Dice large": "0.7447",
+        "Dice huge": "0.7438",
+        "Dice base_ft": "0.7502",
+        "Dice large_ft": "0.7522",
+        "Dice huge_ft": "0.7587"
+    },
+    {
+        "Dataset": "Task114_Prostate-Anatomical-Edge-Cases",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[56, 192, 160]",
+        "Training spacing": "[2.0, 0.9765625, 0.9765625]",
+        "Train cases": "104",
+        "Test cases": "27",
+        "Category-EN": "{'0': 'background', '1': 'Prostate', '2': 'Rectum', '3': 'Bladder', '4': 'Left femoral head', '5': 'Right femoral head'}",
+        "Category-CN": "{'0': '背景', '1': '前列腺', '2': '直肠', '3': '膀胱', '4': '左股骨头', '5': '右股骨头'}",
+        "Dice nnunet": "0.6493",
+        "Dice base": "0.7269",
+        "Dice large": "0.7922",
+        "Dice huge": "0.7347",
+        "Dice base_ft": "0.7452",
+        "Dice large_ft": "0.8152",
+        "Dice huge_ft": "0.8002"
+    },
+    {
+        "Dataset": "Task115_QIBA-VolCT-1B",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[80, 192, 160]",
+        "Training spacing": "[1.25, 0.703125, 0.703125]",
+        "Train cases": "119",
+        "Test cases": "30",
+        "Category-EN": "{'0': 'background', '1': 'Lung tumor'}",
+        "Category-CN": "{'0': '背景', '1': '肺肿瘤'}",
+        "Dice nnunet": "0.6217",
+        "Dice base": "0.6719",
+        "Dice large": "0.6422",
+        "Dice huge": "0.6237",
+        "Dice base_ft": "0.8029",
+        "Dice large_ft": "0.7814",
+        "Dice huge_ft": "0.7767"
+    },
+    {
+        "Dataset": "Task116_ISPY1",
+        "Framework": "nnunet_v1",
+        "Modality": "MRI",
+        "Input Channels": "1",
+        "Patch size": "[96, 160, 160]",
+        "Training spacing": "[0.8243237137794495, 0.78125, 0.78125]",
+        "Train cases": "656",
+        "Test cases": "165",
+        "Category-EN": "{'0': 'background', '1': 'Breast tissue', '2': 'Breast tumor'}",
+        "Category-CN": "{'0': '背景', '1': '乳腺组织', '2': '乳腺肿瘤'}",
+        "Dice nnunet": "0.3068",
+        "Dice base": "0.3145",
+        "Dice large": "0.324",
+        "Dice huge": "0.3295",
+        "Dice base_ft": "0.3206",
+        "Dice large_ft": "0.3349",
+        "Dice huge_ft": "0.3263"
+    },
+    {
+        "Dataset": "Task166_LongitudinalMultipleSclerosisLesionSegmentation",
+        "Framework": "nnunet_v1",
+        "Modality": "FLAIR MRI,T1Gd MRI,PD MRI,T2 MRI",
+        "Input Channels": "4",
+        "Patch size": "[128, 160, 112]",
+        "Training spacing": "[1.0, 1.0, 1.0]",
+        "Train cases": "16",
+        "Test cases": "5",
+        "Category-EN": "{'0': 'background', '1': 'Lesion'}",
+        "Category-CN": "{'0': '背景', '1': '病灶'}",
+        "Dice nnunet": "0.8045",
+        "Dice base": "0.8046",
+        "Dice large": "0.8012",
+        "Dice huge": "0.8033",
+        "Dice base_ft": "0.81",
+        "Dice large_ft": "0.8084",
+        "Dice huge_ft": "0.8008"
+    },
+    {
+        "Dataset": "Task502_WMH",
+        "Framework": "nnunet_v1",
+        "Modality": "FLAIR MRI,T1 MRI",
+        "Input Channels": "2",
+        "Patch size": "[40, 224, 192]",
+        "Training spacing": "[3.0, 0.976599931716919, 1.0]",
+        "Train cases": "48",
+        "Test cases": "12",
+        "Category-EN": "{'0': 'background', '1': 'White matter hyperintensity', '2': 'Other pathology'}",
+        "Category-CN": "{'0': '背景', '1': '白质高信号', '2': '其他病理'}",
+        "Dice nnunet": "0.5604",
+        "Dice base": "0.4739",
+        "Dice large": "0.4959",
+        "Dice huge": "0.4946",
+        "Dice base_ft": "0.4927",
+        "Dice large_ft": "0.5208",
+        "Dice huge_ft": "0.5707"
+    },
+    {
+        "Dataset": "Task503_BraTs2015",
+        "Framework": "nnunet_v1",
+        "Modality": "FLAIR MRI,T1 MRI,T1 weighted MRI,T2 MRI",
+        "Input Channels": "4",
+        "Patch size": "[128, 128, 128]",
+        "Training spacing": "[1.0, 1.0, 1.0]",
+        "Train cases": "219",
+        "Test cases": "55",
+        "Category-EN": "{'0': 'background', '1': 'Necrosis', '2': 'Edema', '3': 'Non-enhancing tumor', '4': 'Enhancing tumor'}",
+        "Category-CN": "{'0': '背景', '1': '坏疽', '2': '水肿', '3': '非强化肿瘤', '4': '强化肿瘤'}",
+        "Dice nnunet": "0.6034",
+        "Dice base": "0.6175",
+        "Dice large": "0.6144",
+        "Dice huge": "0.6175",
+        "Dice base_ft": "0.6143",
+        "Dice large_ft": "0.6185",
+        "Dice huge_ft": "0.6177"
+    },
+    {
+        "Dataset": "Task504_ATLAS",
+        "Framework": "nnunet_v1",
+        "Modality": "T1 weighted MRI",
+        "Input Channels": "1",
+        "Patch size": "[128, 128, 128]",
+        "Training spacing": "[1.0, 1.0, 1.0]",
+        "Train cases": "524",
+        "Test cases": "131",
+        "Category-EN": "{'0': 'background', '1': 'Brain lesion'}",
+        "Category-CN": "{'0': '背景', '1': '脑病灶'}",
+        "Dice nnunet": "0.6507",
+        "Dice base": "0.6505",
+        "Dice large": "0.654",
+        "Dice huge": "0.6684",
+        "Dice base_ft": "0.6535",
+        "Dice large_ft": "0.6612",
+        "Dice huge_ft": "0.6706"
+    },
+    {
+        "Dataset": "Task507_Myops2020",
+        "Framework": "nnunet_v1",
+        "Modality": "MRI,DE MRI,T2 MRI",
+        "Input Channels": "3",
+        "Patch size": "[6, 512, 512]",
+        "Training spacing": "[11.999998855590821, 0.7290666699409485, 0.7290666699409485]",
+        "Train cases": "20",
+        "Test cases": "5",
+        "Category-EN": "{'0': 'background', '1': 'Left ventricle', '2': 'Right ventricle', '3': 'Left ventricular myocardium', '4': 'Left ventricular myocardial edema', '5': 'Left ventricular myocardial scars'}",
+        "Category-CN": "{'0': '背景', '1': '左心室', '2': '右心室血池', '3': '左心室心肌', '4': '左心室心肌水肿', '5': '左心室心肌疤痕'}",
+        "Dice nnunet": "0.732",
+        "Dice base": "0.7124",
+        "Dice large": "0.7155",
+        "Dice huge": "0.7059",
+        "Dice base_ft": "0.7217",
+        "Dice large_ft": "0.7308",
+        "Dice huge_ft": "0.7286"
+    },
+    {
+        "Dataset": "Task511_ATLAS2023",
+        "Framework": "nnunet_v1",
+        "Modality": "T1 weighted MRI",
+        "Input Channels": "1",
+        "Patch size": "[40, 192, 224]",
+        "Training spacing": "[2.9999969005584717, 1.0416666269302368, 1.0416666269302368]",
+        "Train cases": "48",
+        "Test cases": "12",
+        "Category-EN": "{'0': 'background', '1': 'Liver', '2': 'Liver tumor'}",
+        "Category-CN": "{'0': '背景', '1': '肝', '2': '肝肿瘤'}",
+        "Dice nnunet": "0.7596",
+        "Dice base": "0.7572",
+        "Dice large": "0.7674",
+        "Dice huge": "0.7652",
+        "Dice base_ft": "0.7612",
+        "Dice large_ft": "0.783",
+        "Dice huge_ft": "0.8003"
+    },
+    {
+        "Dataset": "Task525_CMRxMotions",
+        "Framework": "nnunet_v1",
+        "Modality": "CMR MRI",
+        "Input Channels": "1",
+        "Patch size": "[10, 448, 384]",
+        "Training spacing": "[9.600000381469727, 0.6640620231628418, 0.6640621423721313]",
+        "Train cases": "111",
+        "Test cases": "28",
+        "Category-EN": "{'0': 'background', '1': 'Left ventricle', '2': 'Myocardium', '3': 'Right ventricle'}",
+        "Category-CN": "{'0': '背景', '1': '左心室', '2': '心肌', '3': '右心室'}",
+        "Dice nnunet": "0.9022",
+        "Dice base": "0.9007",
+        "Dice large": "0.9012",
+        "Dice huge": "0.9006",
+        "Dice base_ft": "0.9031",
+        "Dice large_ft": "0.904",
+        "Dice huge_ft": "0.903"
+    },
+    {
+        "Dataset": "Task556_FeTA2022_all",
+        "Framework": "nnunet_v1",
+        "Modality": "T2 weighted MRI",
+        "Input Channels": "1",
+        "Patch size": "[128, 128, 128]",
+        "Training spacing": "[0.5038999915122986, 0.5038999915122986, 0.5038999915122986]",
+        "Train cases": "96",
+        "Test cases": "24",
+        "Category-EN": "{'0': 'background', '1': 'External cerebrospinal fluid', '2': 'Gray matter', '3': 'White matter', '4': 'Cerebral ventricle', '5': 'Cerebellum', '6': 'Deep gray matter', '7': 'Bain stem'}",
+        "Category-CN": "{'0': '背景', '1': '外脑脊液', '2': '灰质', '3': '白质', '4': '脑室', '5': '小脑', '6': '深部灰质', '7': '脑干'}",
+        "Dice nnunet": "0.8542",
+        "Dice base": "0.851",
+        "Dice large": "0.8503",
+        "Dice huge": "0.8502",
+        "Dice base_ft": "0.854",
+        "Dice large_ft": "0.8516",
+        "Dice huge_ft": "0.8507"
+    },
+    {
+        "Dataset": "Task559_WORD",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[64, 160, 160]",
+        "Training spacing": "[3.0, 0.9765625, 0.9765625]",
+        "Train cases": "96",
+        "Test cases": "24",
+        "Category-EN": "{'0': 'background', '1': 'Liver', '10': 'Colon', '11': 'Intestine', '12': 'Adrenal gland', '13': 'Rectum', '14': 'Bladder', '15': 'Left femoral head', '16': 'Right femoral head', '2': 'Spleen', '3': 'Left kidney', '4': 'Right kidney', '5': 'Stomach', '6': 'Gallbladder', '7': 'Esophagus', '8': 'Pancreas', '9': 'Duodenum'}",
+        "Category-CN": "{'0': '背景', '1': '肝', '10': '结肠', '11': '肠', '12': '肾上腺', '13': '直肠', '14': '膀胱', '15': '左股骨头', '16': '右股骨头', '2': '脾脏', '3': '左肾', '4': '右肾', '5': '胃', '6': '胆囊', '7': '食管', '8': '胰腺', '9': '十二指肠'}",
+        "Dice nnunet": "0.8304",
+        "Dice base": "0.8475",
+        "Dice large": "0.8454",
+        "Dice huge": "0.8449",
+        "Dice base_ft": "0.8505",
+        "Dice large_ft": "0.8601",
+        "Dice huge_ft": "0.8606"
+    },
+    {
+        "Dataset": "Task601_CTSpine1K_Full",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[128, 128, 128]",
+        "Training spacing": "[0.800000011920929, 0.7578125, 0.7578125]",
+        "Train cases": "804",
+        "Test cases": "201",
+        "Category-EN": "{'0': 'background', '1': 'Vertebrae C1', '2': 'Vertebrae C2', '3': 'Vertebrae C3', '4': 'Vertebrae C4', '5': 'Vertebrae C5', '6': 'Vertebrae C6', '7': 'Vertebrae C7', '8': 'Vertebrae T1', '9': 'Vertebrae T13', '10': 'Vertebrae T2', '11': 'Vertebrae T3', '12': 'Vertebrae T4', '13': 'Vertebrae T5', '14': 'Vertebrae T6', '15': 'Vertebrae T7', '16': 'Vertebrae T8', '17': 'Vertebrae T10', '18': 'Vertebrae T11', '19': 'Vertebrae T12', '20': 'Vertebrae L1', '21': 'Vertebrae L2', '22': 'Vertebrae L3', '23': 'Vertebrae L4', '24': 'Vertebrae L5', '25': 'Vertebrae L6'}",
+        "Category-CN": "{'0': '背景', '1': '颈椎C1', '2': '颈椎C2', '3': '颈椎C3', '4': '颈椎C4', '5': '颈椎C5', '6': '颈椎C6', '7': '颈椎C7', '8': '胸椎T1', '9': '胸椎T13', '10': '胸椎T2', '11': '胸椎T3', '12': '胸椎T4', '13': '胸椎T5', '14': '胸椎T6', '15': '胸椎T7', '16': '胸椎T8', '17': '胸椎T10', '18': '胸椎T11', '19': '胸椎T12', '20': '腰椎L1', '21': '腰椎L2', '22': '腰椎L3', '23': '腰椎L4', '24': '腰椎L5', '25': '腰椎L6'}",
+        "Dice nnunet": "0.6058",
+        "Dice base": "0.644",
+        "Dice large": "0.6619",
+        "Dice huge": "0.6591",
+        "Dice base_ft": "0.6673",
+        "Dice large_ft": "0.682",
+        "Dice huge_ft": "0.6857"
+    },
+    {
+        "Dataset": "Task603_MMWHS",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[80, 192, 160]",
+        "Training spacing": "[0.762499988079071, 0.6835939884185791, 0.6835939884185791]",
+        "Train cases": "32",
+        "Test cases": "8",
+        "Category-EN": "{'0': 'background', '1': 'Left ventricular myocardium', '2': 'Left atrium', '3': 'Left ventricle', '4': 'Right atrium', '5': 'Right ventricle', '6': 'Ascending aorta', '7': 'Pulmonary artery'}",
+        "Category-CN": "{'0': '背景', '1': '左心室心肌', '2': '左心房', '3': '左心室', '4': '右心房', '5': '右心室', '6': '升主动脉', '7': '肺动脉'}",
+        "Dice nnunet": "0.9003",
+        "Dice base": "0.8969",
+        "Dice large": "0.8966",
+        "Dice huge": "0.8951",
+        "Dice base_ft": "0.8951",
+        "Dice large_ft": "0.8999",
+        "Dice huge_ft": "0.8952"
+    },
+    {
+        "Dataset": "Task605_SegThor",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[64, 192, 160]",
+        "Training spacing": "[2.5, 0.9765620231628418, 0.9765620231628418]",
+        "Train cases": "32",
+        "Test cases": "8",
+        "Category-EN": "{'0': 'background', '1': 'Esophagus', '2': 'Heart', '3': 'Trachea', '4': 'Aorta'}",
+        "Category-CN": "{'0': '背景', '1': '食管', '2': '心脏', '3': '气管', '4': '主动脉'}",
+        "Dice nnunet": "0.9088",
+        "Dice base": "0.9065",
+        "Dice large": "0.9098",
+        "Dice huge": "0.9097",
+        "Dice base_ft": "0.9089",
+        "Dice large_ft": "0.9131",
+        "Dice huge_ft": "0.9149"
+    },
+    {
+        "Dataset": "Task606_orCaScore",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[28, 256, 256]",
+        "Training spacing": "[2.5, 0.42899999022483826, 0.42899999022483826]",
+        "Train cases": "25",
+        "Test cases": "7",
+        "Category-EN": "{'0': 'background', '1': 'Left anterior descending artery', '2': 'Left circumflex artery', '3': 'Right coronary artery'}",
+        "Category-CN": "{'0': '背景', '1': '左前降支动脉', '2': '左回旋支动脉', '3': '右冠状动脉'}",
+        "Dice nnunet": "0.047",
+        "Dice base": "0.0241",
+        "Dice large": "0.036",
+        "Dice huge": "0.0477",
+        "Dice base_ft": "0.2576",
+        "Dice large_ft": "0.378",
+        "Dice huge_ft": "0.3576"
+    },
+    {
+        "Dataset": "Task611_PROMISE12",
+        "Framework": "nnunet_v1",
+        "Modality": "MRI",
+        "Input Channels": "1",
+        "Patch size": "[28, 256, 256]",
+        "Training spacing": "[2.2000471115112306, 0.612500011920929, 0.612500011920929]",
+        "Train cases": "40",
+        "Test cases": "10",
+        "Category-EN": "{'0': 'background', '1': 'Prostate'}",
+        "Category-CN": "{'0': '背景', '1': '前列腺'}",
+        "Dice nnunet": "0.9012",
+        "Dice base": "0.9035",
+        "Dice large": "0.8615",
+        "Dice huge": "0.9008",
+        "Dice base_ft": "0.9065",
+        "Dice large_ft": "0.9101",
+        "Dice huge_ft": "0.9098"
+    },
+    {
+        "Dataset": "Task612_CTPelvic1k",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[128, 128, 128]",
+        "Training spacing": "[0.800000011920929, 0.78125, 0.78125]",
+        "Train cases": "884",
+        "Test cases": "222",
+        "Category-EN": "{'0': 'background', '1': 'Sacrum', '2': 'Right hip', '3': 'Left hip', '4': 'Lumbar vertebra'}",
+        "Category-CN": "{'0': '背景', '1': '骶骨', '2': '右髋', '3': '左髋', '4': '腰椎'}",
+        "Dice nnunet": "0.6524",
+        "Dice base": "0.7078",
+        "Dice large": "0.7013",
+        "Dice huge": "0.7015",
+        "Dice base_ft": "0.8808",
+        "Dice large_ft": "0.8939",
+        "Dice huge_ft": "0.8954"
+    },
+    {
+        "Dataset": "Task613_COVID-19-20",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[28, 256, 256]",
+        "Training spacing": "[5.0, 0.7429999709129333, 0.7429999709129333]",
+        "Train cases": "159",
+        "Test cases": "40",
+        "Category-EN": "{'0': 'background', '1': 'COVID-19 lesion'}",
+        "Category-CN": "{'0': '背景', '1': 'COVID-19病变'}",
+        "Dice nnunet": "0.7263",
+        "Dice base": "0.7418",
+        "Dice large": "0.7382",
+        "Dice huge": "0.7368",
+        "Dice base_ft": "0.7426",
+        "Dice large_ft": "0.7361",
+        "Dice huge_ft": "0.734"
+    },
+    {
+        "Dataset": "Task614_LUNA16",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[80, 192, 160]",
+        "Training spacing": "[1.0, 1.0, 1.0]",
+        "Train cases": "710",
+        "Test cases": "178",
+        "Category-EN": "{'0': 'background', '1': 'Lung'}",
+        "Category-CN": "{'0': '背景', '1': '肺\\n   '}",
+        "Dice nnunet": "0.9871",
+        "Dice base": "0.9872",
+        "Dice large": "0.9875",
+        "Dice huge": "0.9866",
+        "Dice base_ft": "0.9876",
+        "Dice large_ft": "0.9881",
+        "Dice huge_ft": "0.988"
+    },
+    {
+        "Dataset": "Task615_Chest_CT_Scans_with_COVID-19",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[24, 256, 256]",
+        "Training spacing": "[8.0, 0.7064999938011169, 0.7064999938011169]",
+        "Train cases": "40",
+        "Test cases": "10",
+        "Category-EN": "{'0': 'background', '1': 'COVID-19 lesion'}",
+        "Category-CN": "{'0': '背景', '1': 'COVID-19病变'}",
+        "Dice nnunet": "0.5568",
+        "Dice base": "0.5971",
+        "Dice large": "0.6037",
+        "Dice huge": "0.5686",
+        "Dice base_ft": "0.5975",
+        "Dice large_ft": "0.6324",
+        "Dice huge_ft": "0.6249"
+    },
+    {
+        "Dataset": "Task616_LNDb",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[96, 160, 160]",
+        "Training spacing": "[1.0, 0.6435546875, 0.6435546875]",
+        "Train cases": "188",
+        "Test cases": "48",
+        "Category-EN": "{'0': 'background', '1': 'Lung nodule'}",
+        "Category-CN": "{'0': '背景', '1': '肺结节\\n   '}",
+        "Dice nnunet": "0.3587",
+        "Dice base": "0.3175",
+        "Dice large": "0.3509",
+        "Dice huge": "0.3738",
+        "Dice base_ft": "0.3667",
+        "Dice large_ft": "0.4053",
+        "Dice huge_ft": "0.3822"
+    },
+    {
+        "Dataset": "Task628_StructSeg2019_subtask1",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[48, 192, 192]",
+        "Training spacing": "[3.0, 1.140625, 1.140625]",
+        "Train cases": "40",
+        "Test cases": "10",
+        "Category-EN": "{'0': 'background', '1': 'Left eye', '10': 'Left temporal lobe', '11': 'Right temporal lobe', '12': 'Spinal cord', '13': 'Left parotid gland', '14': 'Right parotid gland', '15': 'Left inner ear', '16': 'Right inner ear', '17': 'Left middle ear', '18': 'Right middle ear', '19': 'Left temporomandibular joint', '2': 'Right eye', '20': 'Right temporomandibular joint', '21': 'Left mandible', '22': 'Right mandible', '3': 'Left crystalline lens', '4': 'Right crystalline lens', '5': 'Left optic nerve', '6': 'Right optic nerve', '7': 'Optic chiasm', '8': 'Pituitary gland', '9': 'Bain stem'}",
+        "Category-CN": "{'0': '背景', '1': '左眼', '10': '左颞叶', '11': '右颞叶', '12': '脊髓', '13': '左腮腺', '14': '右腮腺', '15': '左内耳', '16': '右内耳', '17': '左中耳', '18': '右中耳', '19': '左颞下颌关节', '2': '右眼', '20': '右颞下颌关节', '21': '左下颌骨', '22': '右下颌骨', '3': '左晶状体', '4': '右晶状体', '5': '左视神经', '6': '右视神经', '7': '视交叉', '8': '垂体', '9': '脑干'}",
+        "Dice nnunet": "0.7499",
+        "Dice base": "0.7658",
+        "Dice large": "0.7867",
+        "Dice huge": "0.724",
+        "Dice base_ft": "0.7332",
+        "Dice large_ft": "0.7936",
+        "Dice huge_ft": "0.7096"
+    },
+    {
+        "Dataset": "Task629_StructSeg2019_subtask2",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[40, 224, 192]",
+        "Training spacing": "[5.0, 1.171875, 1.171875]",
+        "Train cases": "40",
+        "Test cases": "10",
+        "Category-EN": "{'0': 'background', '1': 'Left lung', '2': 'Right lung', '3': 'Spinal cord', '4': 'Esophagus', '5': 'heart ', '6': 'trachea '}",
+        "Category-CN": "{'0': '背景', '1': '左肺', '2': '右肺', '3': '脊髓', '4': '食管', '5': '背景', '6': '背景'}",
+        "Dice nnunet": "0.905",
+        "Dice base": "0.9015",
+        "Dice large": "0.9012",
+        "Dice huge": "0.9045",
+        "Dice base_ft": "0.9061",
+        "Dice large_ft": "0.9074",
+        "Dice huge_ft": "0.9074"
+    },
+    {
+        "Dataset": "Task630_StructSeg2019_subtask3",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[40, 224, 192]",
+        "Training spacing": "[5.0, 1.171875, 1.171875]",
+        "Train cases": "40",
+        "Test cases": "10",
+        "Category-EN": "{'0': 'background', '1': 'Lung cancer'}",
+        "Category-CN": "{'0': '背景', '1': '肺癌\\n   '}",
+        "Dice nnunet": "0.577",
+        "Dice base": "0.5655",
+        "Dice large": "0.5942",
+        "Dice huge": "0.5019",
+        "Dice base_ft": "0.6081",
+        "Dice large_ft": "0.6196",
+        "Dice huge_ft": "0.62"
+    },
+    {
+        "Dataset": "Task631_StructSeg2019_subtask4",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[48, 192, 192]",
+        "Training spacing": "[3.0, 1.140625, 1.140625]",
+        "Train cases": "40",
+        "Test cases": "10",
+        "Category-EN": "{'0': 'background', '1': 'Nasopharyngeal cancer'}",
+        "Category-CN": "{'0': '背景', '1': '鼻咽癌'}",
+        "Dice nnunet": "0.6024",
+        "Dice base": "0.616",
+        "Dice large": "0.5988",
+        "Dice huge": "0.6019",
+        "Dice base_ft": "0.6304",
+        "Dice large_ft": "0.6314",
+        "Dice huge_ft": "0.63"
+    },
+    {
+        "Dataset": "Task666_MESSEG",
+        "Framework": "nnunet_v1",
+        "Modality": "FLAIR MRI,FLAIR MRI",
+        "Input Channels": "2",
+        "Patch size": "[112, 128, 160]",
+        "Training spacing": "[0.9765625, 0.9765625, 0.5300010740756989]",
+        "Train cases": "32",
+        "Test cases": "8",
+        "Category-EN": "{'0': 'background', '1': 'Lesion'}",
+        "Category-CN": "{'0': '背景', '1': '病灶'}",
+        "Dice nnunet": "0.5484",
+        "Dice base": "0.5105",
+        "Dice large": "0.5619",
+        "Dice huge": "0.5191",
+        "Dice base_ft": "0.5447",
+        "Dice large_ft": "0.5886",
+        "Dice huge_ft": "0.5615"
+    },
+    {
+        "Dataset": "Task700_SEG_A_2023",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[64, 160, 160]",
+        "Training spacing": "[2.985045075416565, 0.732421875, 0.732421875]",
+        "Train cases": "44",
+        "Test cases": "12",
+        "Category-EN": "{'0': 'background', '1': 'Aorta'}",
+        "Category-CN": "{'0': '背景', '1': '主动脉'}",
+        "Dice nnunet": "0.9245",
+        "Dice base": "0.9139",
+        "Dice large": "0.9192",
+        "Dice huge": "0.9201",
+        "Dice base_ft": "0.9258",
+        "Dice large_ft": "0.9277",
+        "Dice huge_ft": "0.9274"
+    },
+    {
+        "Dataset": "Task701_LNQ2023",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[56, 192, 160]",
+        "Training spacing": "[2.0, 0.826171875, 0.826171875]",
+        "Train cases": "314",
+        "Test cases": "79",
+        "Category-EN": "{'0': 'background', '1': 'Pulmonary nodule'}",
+        "Category-CN": "{'0': '背景', '1': '肺结节'}",
+        "Dice nnunet": "0.4144",
+        "Dice base": "0.4999",
+        "Dice large": "0.4811",
+        "Dice huge": "0.4762",
+        "Dice base_ft": "0.509",
+        "Dice large_ft": "0.4983",
+        "Dice huge_ft": "0.5103"
+    },
+    {
+        "Dataset": "Task701_SegRap2023",
+        "Framework": "nnunet_v1",
+        "Modality": "CT,CT",
+        "Input Channels": "2",
+        "Patch size": "[28, 256, 224]",
+        "Training spacing": "[3.0, 0.5419921875, 0.5419921875]",
+        "Train cases": "96",
+        "Test cases": "24",
+        "Category-EN": "{'0': 'background', '1': 'Brain', '2': 'Bain stem', '3': 'Optic chiasm', '4': 'Left cochlea', '5': 'Right cochlea', '6': 'Esophagus', '7': 'Left eustachian tube', '8': 'Right eustachian tube', '9': 'Left eye', '10': 'Right eye', '11': 'Left hippocampus', '12': 'Right hippocampus', '13': 'Left internal auditory canal', '14': 'Right internal auditory canal', '15': 'Larynx', '16': 'Larynx glottis', '17': 'Larynx supraglottic', '18': 'Left crystalline lens', '19': 'Right crystalline lens', '20': 'Left mandible', '21': 'Right mandible', '22': 'Left mastoid', '23': 'Right mastoid', '24': 'Left middle ear', '25': 'Right middle ear', '26': 'Left optic nerve', '27': 'Right optic nerve', '28': 'Oral cavity', '29': 'Left parotid gland', '30': 'Right parotid gland', '31': 'Pharynx', '32': 'Pituitary gland', '33': 'Spinal cord', '34': 'Left submandibular gland', '35': 'Right submandibular gland', '36': 'Right temporal lobe', '37': 'Right temporal lobe', '38': 'Thyroid gland', '39': 'Trachea', '40': 'Left tympanic cavity', '41': 'Left temporomandibular joint', '42': 'Right temporomandibular joint', '43': 'Right tympanic cavity', '44': 'Left vestibular semicircular canal', '45': 'Right vestibular semicircular canal'}",
+        "Category-CN": "{'0': '背景', '1': '脑', '2': '脑干', '3': '视交叉', '4': '左耳蜗', '5': '右耳蜗', '6': '食管', '7': '左耳咽管', '8': '右耳咽管', '9': '左眼', '10': '右眼', '11': '海马体', '12': '海马体', '13': '左内耳道', '14': '右内耳道', '15': '喉', '16': '声门', '17': '喉上部', '18': '左晶状体', '19': '右晶状体', '20': '左下颌骨', '21': '右下颌骨', '22': '左乳突', '23': '右乳突', '24': '左中耳', '25': '右中耳', '26': '左视神经', '27': '右视神经', '28': '口腔', '29': '左腮腺', '30': '右腮腺', '31': '咽', '32': '垂体', '33': '脊髓', '34': '左颌下腺', '35': '右颌下腺', '36': '右颞叶', '37': '右颞叶', '38': '甲状腺', '39': '气管', '40': '左鼓室', '41': '左颞下颌关节', '42': '右颞下颌关节', '43': '右鼓室', '44': '左前庭半规管', '45': '右前庭半规管'}",
+        "Dice nnunet": "0.8161",
+        "Dice base": "0.7477",
+        "Dice large": "0.8178",
+        "Dice huge": "0.804",
+        "Dice base_ft": "0.8435",
+        "Dice large_ft": "0.8406",
+        "Dice huge_ft": "0.8426"
+    },
+    {
+        "Dataset": "Task702_CAS2023",
+        "Framework": "nnunet_v1",
+        "Modality": "TOF MRI",
+        "Input Channels": "1",
+        "Patch size": "[48, 224, 224]",
+        "Training spacing": "[1.0, 1.0, 1.0]",
+        "Train cases": "80",
+        "Test cases": "20",
+        "Category-EN": "{'0': 'background', '1': 'Cerebral artery'}",
+        "Category-CN": "{'0': '背景', '1': '脑动脉'}",
+        "Dice nnunet": "0.867",
+        "Dice base": "0.8677",
+        "Dice large": "0.8665",
+        "Dice huge": "0.8654",
+        "Dice base_ft": "0.8691",
+        "Dice large_ft": "0.87",
+        "Dice huge_ft": "0.8704"
+    },
+    {
+        "Dataset": "Task702_SegRap2023_Task2",
+        "Framework": "nnunet_v1",
+        "Modality": "CT,CT",
+        "Input Channels": "2",
+        "Patch size": "[28, 256, 256]",
+        "Training spacing": "[3.0, 0.5419921875, 0.5419921875]",
+        "Train cases": "96",
+        "Test cases": "24",
+        "Category-EN": "{'0': 'background', '1': 'GTV nasopharynx', '2': 'GTV lymph node'}",
+        "Category-CN": "{'0': '背景', '1': '鼻咽部的总体靶区体积', '2': '淋巴结的总体靶区体积'}",
+        "Dice nnunet": "0.7451",
+        "Dice base": "0.7399",
+        "Dice large": "0.7506",
+        "Dice huge": "0.7406",
+        "Dice base_ft": "0.7468",
+        "Dice large_ft": "0.757",
+        "Dice huge_ft": "0.7543"
+    },
+    {
+        "Dataset": "Task703_TDSC-ABUS2023",
+        "Framework": "nnunet_v1",
+        "Modality": "Ultrasound",
+        "Input Channels": "1",
+        "Patch size": "[80, 160, 192]",
+        "Training spacing": "[1.0, 1.0, 1.0]",
+        "Train cases": "80",
+        "Test cases": "20",
+        "Category-EN": "{'0': 'background', '1': 'Breast tumor'}",
+        "Category-CN": "{'0': '背景', '1': '乳腺肿瘤'}",
+        "Dice nnunet": "0.4966",
+        "Dice base": "0.537",
+        "Dice large": "0.5018",
+        "Dice huge": "0.4938",
+        "Dice base_ft": "0.5454",
+        "Dice large_ft": "0.5265",
+        "Dice huge_ft": "0.5278"
+    },
+    {
+        "Dataset": "Task704_ToothFairy2023",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[80, 160, 192]",
+        "Training spacing": "[1.0, 1.0, 1.0]",
+        "Train cases": "122",
+        "Test cases": "31",
+        "Category-EN": "{'0': 'background', '1': 'Inferior alveolar nerve'}",
+        "Category-CN": "{'0': '背景', '1': '下牙槽神经'}",
+        "Dice nnunet": "0.8212",
+        "Dice base": "0.8205",
+        "Dice large": "0.8182",
+        "Dice huge": "0.8189",
+        "Dice base_ft": "0.821",
+        "Dice large_ft": "0.8257",
+        "Dice huge_ft": "0.8226"
+    },
+    {
+        "Dataset": "Task710_autoPET",
+        "Framework": "nnunet_v1",
+        "Modality": "PET,CT",
+        "Input Channels": "2",
+        "Patch size": "[128, 128, 128]",
+        "Training spacing": "[3.0, 2.0364201068878174, 2.0364201068878174]",
+        "Train cases": "811",
+        "Test cases": "203",
+        "Category-EN": "{'0': 'background', '1': 'Lesion'}",
+        "Category-CN": "{'0': '背景', '1': '病灶'}",
+        "Dice nnunet": "0.6898",
+        "Dice base": "0.7396",
+        "Dice large": "0.7494",
+        "Dice huge": "0.7219",
+        "Dice base_ft": "0.7468",
+        "Dice large_ft": "0.7607",
+        "Dice huge_ft": "0.761"
+    },
+    {
+        "Dataset": "Task711_autoPET_PET_only",
+        "Framework": "nnunet_v1",
+        "Modality": "PET,CT",
+        "Input Channels": "2",
+        "Patch size": "[128, 128, 128]",
+        "Training spacing": "[3.0, 2.0364201068878174, 2.0364201068878174]",
+        "Train cases": "400",
+        "Test cases": "101",
+        "Category-EN": "{'0': 'background', '1': 'Lesion'}",
+        "Category-CN": "{'0': '背景', '1': '病灶'}",
+        "Dice nnunet": "0.7071",
+        "Dice base": "0.7225",
+        "Dice large": "0.7337",
+        "Dice huge": "0.7259",
+        "Dice base_ft": "0.7508",
+        "Dice large_ft": "0.7704",
+        "Dice huge_ft": "0.7732"
+    },
+    {
+        "Dataset": "Task712_autoPET_CT_only",
+        "Framework": "nnunet_v1",
+        "Modality": "PET,CT",
+        "Input Channels": "2",
+        "Patch size": "[128, 128, 128]",
+        "Training spacing": "[3.0, 2.0364201068878174, 2.0364201068878174]",
+        "Train cases": "811",
+        "Test cases": "203",
+        "Category-EN": "{'0': 'background', '1': 'Lesion'}",
+        "Category-CN": "{'0': '背景', '1': '病灶'}",
+        "Dice nnunet": "0.3694",
+        "Dice base": "0.4109",
+        "Dice large": "0.4097",
+        "Dice huge": "0.4372",
+        "Dice base_ft": "0.496",
+        "Dice large_ft": "0.5188",
+        "Dice huge_ft": "0.528"
+    },
+    {
+        "Dataset": "Task720_HIE2023",
+        "Framework": "nnunet_v1",
+        "Modality": "ADC MRI,ZADC MRI",
+        "Input Channels": "2",
+        "Patch size": "[48, 96, 80]",
+        "Training spacing": "[2.200000047683716, 1.375, 1.375]",
+        "Train cases": "68",
+        "Test cases": "17",
+        "Category-EN": "{'0': 'background', '1': 'Hypoxic ischemic encephalopathy'}",
+        "Category-CN": "{'0': '背景', '1': '缺氧缺血性脑病'}",
+        "Dice nnunet": "0.4613",
+        "Dice base": "0.4938",
+        "Dice large": "0.4399",
+        "Dice huge": "0.4726",
+        "Dice base_ft": "0.4602",
+        "Dice large_ft": "0.4552",
+        "Dice huge_ft": "0.4349"
+    },
+    {
+        "Dataset": "Task894_BraTS2023_MET",
+        "Framework": "nnunet_v1",
+        "Modality": "T1 MRI,T1 weighted MRI,T2 weighted MRI,FLAIR MRI",
+        "Input Channels": "4",
+        "Patch size": "[128, 160, 112]",
+        "Training spacing": "[1.0, 1.0, 1.0]",
+        "Train cases": "190",
+        "Test cases": "48",
+        "Category-EN": "{'0': 'background', '1': 'Non-enhancing tumor', '2': 'Edema', '3': 'Enhancing tumor'}",
+        "Category-CN": "{'0': '背景', '1': '非强化肿瘤', '2': '水肿', '3': '强化肿瘤'}",
+        "Dice nnunet": "0.6487",
+        "Dice base": "0.6587",
+        "Dice large": "0.6644",
+        "Dice huge": "0.6538",
+        "Dice base_ft": "0.6697",
+        "Dice large_ft": "0.6672",
+        "Dice huge_ft": "0.6768"
+    },
+    {
+        "Dataset": "Task895_BraTS2023_SSA",
+        "Framework": "nnunet_v1",
+        "Modality": "T1 MRI,T1 weighted MRI,T2 weighted MRI,FLAIR MRI",
+        "Input Channels": "4",
+        "Patch size": "[128, 128, 128]",
+        "Training spacing": "[1.0, 1.0, 1.0]",
+        "Train cases": "34",
+        "Test cases": "9",
+        "Category-EN": "{'0': 'background', '1': 'Non-enhancing tumor', '2': 'Edema', '3': 'Enhancing tumor'}",
+        "Category-CN": "{'0': '背景', '1': '非强化肿瘤', '2': '水肿', '3': '强化肿瘤'}",
+        "Dice nnunet": "0.798",
+        "Dice base": "0.7923",
+        "Dice large": "0.7841",
+        "Dice huge": "0.7807",
+        "Dice base_ft": "0.8091",
+        "Dice large_ft": "0.8368",
+        "Dice huge_ft": "0.8098"
+    },
+    {
+        "Dataset": "Task896_BraTS2023_PED",
+        "Framework": "nnunet_v1",
+        "Modality": "T1 MRI,T1 weighted MRI,T2 weighted MRI,FLAIR MRI",
+        "Input Channels": "4",
+        "Patch size": "[128, 128, 128]",
+        "Training spacing": "[1.0, 1.0, 1.0]",
+        "Train cases": "79",
+        "Test cases": "20",
+        "Category-EN": "{'0': 'background', '1': 'Non-enhancing tumor', '2': 'Edema', '3': 'Enhancing tumor'}",
+        "Category-CN": "{'0': '背景', '1': '非强化肿瘤', '2': '水肿', '3': '强化肿瘤'}",
+        "Dice nnunet": "0.4892",
+        "Dice base": "0.4745",
+        "Dice large": "0.4634",
+        "Dice huge": "0.4805",
+        "Dice base_ft": "0.5088",
+        "Dice large_ft": "0.5034",
+        "Dice huge_ft": "0.5062"
+    },
+    {
+        "Dataset": "Task898_BraTS2023_MEN",
+        "Framework": "nnunet_v1",
+        "Modality": "T1 MRI,T1 weighted MRI,T2 weighted MRI,FLAIR MRI",
+        "Input Channels": "4",
+        "Patch size": "[128, 160, 112]",
+        "Training spacing": "[1.0, 1.0, 1.0]",
+        "Train cases": "800",
+        "Test cases": "200",
+        "Category-EN": "{'0': 'background', '1': 'Non-enhancing tumor', '2': 'Edema', '3': 'Enhancing tumor'}",
+        "Category-CN": "{'0': '背景', '1': '非强化肿瘤', '2': '水肿', '3': '强化肿瘤'}",
+        "Dice nnunet": "0.6034",
+        "Dice base": "0.5824",
+        "Dice large": "0.6022",
+        "Dice huge": "0.6027",
+        "Dice base_ft": "0.6024",
+        "Dice large_ft": "0.612",
+        "Dice huge_ft": "0.6307"
+    },
+    {
+        "Dataset": "Task899_BraTS2023_GLI",
+        "Framework": "nnunet_v1",
+        "Modality": "T1 MRI,T1 weighted MRI,T2 weighted MRI,FLAIR MRI",
+        "Input Channels": "4",
+        "Patch size": "[128, 128, 128]",
+        "Training spacing": "[1.0, 1.0, 1.0]",
+        "Train cases": "1000",
+        "Test cases": "251",
+        "Category-EN": "{'0': 'background', '1': 'Necrosis', '2': 'Edema', '3': 'Enhancing tumor'}",
+        "Category-CN": "{'0': '背景', '1': '坏疽', '2': '水肿', '3': '强化肿瘤'}",
+        "Dice nnunet": "0.8507",
+        "Dice base": "0.8494",
+        "Dice large": "0.8514",
+        "Dice huge": "0.8532",
+        "Dice base_ft": "0.8504",
+        "Dice large_ft": "0.8551",
+        "Dice huge_ft": "0.8555"
+    },
+    {
+        "Dataset": "Task966-HaN_Seg",
+        "Framework": "nnunet_v1",
+        "Modality": "CT",
+        "Input Channels": "1",
+        "Patch size": "[40, 224, 192]",
+        "Training spacing": "[2.0, 0.63818359375, 0.63818359375]",
+        "Train cases": "33",
+        "Test cases": "9",
+        "Category-EN": "{'0': 'background', '1': 'Left carotid artery', '2': 'Right carotid artery', '3': 'Arytenoids', '4': 'Mandible', '5': 'Bain stem', '6': 'Buccal mucosa', '7': 'Oral cavity', '8': 'Left cochlea', '9': 'Right cochlea', '10': 'Cricopharyngeal inlet', '11': 'Cervical esophagus', '12': 'Left anterior eyeball segment', '13': 'Right anterior eyeball segment', '14': 'Left posterior eyeball segment', '15': 'Right posterior eyeball segment', '16': 'Left lacrimal gland', '17': 'Right lacrimal gland', '18': 'Left submandibular gland', '19': 'Right submandibular gland', '20': 'Thyroid gland', '21': 'Larynx glottis', '22': 'Larynx supraglottic', '23': 'Lips', '24': 'Optic chiasm', '25': 'Left optic nerve', '26': 'Right optic nerve', '27': 'Left parotid gland', '28': 'Right parotid gland', '29': 'Pituitary gland', '30': 'Spinal cord'}",
+        "Category-CN": "{'0': '背景', '1': '左颈动脉', '2': '右颈动脉', '3': '杓状软骨', '4': '下颌骨', '5': '脑干', '6': '颊粘膜', '7': '口腔', '8': '左耳蜗', '9': '右耳蜗', '10': '喉咽入口', '11': '颈部食管', '12': '左眼前段', '13': '右眼前段', '14': '左眼后段', '15': '右眼后段', '16': '左泪腺', '17': '右泪腺', '18': '左颌下腺', '19': '右颌下腺', '20': '甲状腺', '21': '声门', '22': '喉上部', '23': '唇', '24': '视交叉', '25': '左视神经', '26': '右视神经', '27': '左腮腺', '28': '右腮腺', '29': '垂体', '30': '脊髓'}",
+        "Dice nnunet": "0.62",
+        "Dice base": "0.611",
+        "Dice large": "0.6255",
+        "Dice huge": "0.6684",
+        "Dice base_ft": "0.642",
+        "Dice large_ft": "0.6603",
+        "Dice huge_ft": "0.6396"
+    }
+].concat([]); // Ensure the full JSON array is included
+  
+  // Function: Parse Category-EN string to object
+  function parseCategoryEN(catStr) {
+    try {
+      return JSON.parse(catStr.replace(/'/g, '"'));
+    } catch (e) {
+      console.error('Error parsing Category-EN:', catStr, e);
+      return {};
+    }
+  }
+
+  // Extract unique body parts and categories
+  const bodyParts = {}; // { bodyPart: Set(categories) }
+
+  datasetJSON.forEach(ds => {
+    const catEN = ds["Category-EN"] || "";
+    const categoriesObj = parseCategoryEN(catEN);
+    for (let key in categoriesObj) {
+      if (key === '0' || categoriesObj[key].toLowerCase() === 'background') continue;
+      const category = categoriesObj[key].trim();
+      // Assume category name contains body part keywords; adjust as needed
+      let bodyPart = 'Other';
+      const bodyPartKeywords = ['Brain', 'Heart', 'Liver', 'Lung', 'Prostate', 'Kidney', 'Spine', 'Esophagus', 'Pancreas', 'Colon', 'Spleen', 'Mandible', 'Optic', 'Cervix', 'Aorta', 'Airway', 'Lesion', 'Nerve', 'Vertebrae', 'Eye', 'Ear', 'Spinal cord', 'Trachea'];
+      for (let keyword of bodyPartKeywords) {
+        if (category.includes(keyword)) {
+          bodyPart = keyword;
+          break;
+        }
+      }
+      if (!bodyParts[bodyPart]) bodyParts[bodyPart] = new Set();
+      bodyParts[bodyPart].add(category);
+    }
+  });
+
+  // Convert Sets to arrays and sort
+  for (let bodyPart in bodyParts) {
+    bodyParts[bodyPart] = Array.from(bodyParts[bodyPart]).sort();
+  }
+
+  // Mapping categories to Bootstrap Icons
+  const categoryIconMapping = {
+    'Edema': 'bi-droplet-half',
+    'Non-enhancing tumor': 'bi-bezier',
+    'Enhancing tumor': 'bi-stars',
+    'Left atrium': 'bi-heart-fill',
+    'Liver': 'bi-droplet-fill',
+    'Heart': 'bi-heart-fill',
+    'Lung cancer': 'bi-lungs-fill',
+    'Prostate peripheral zone': 'bi-shield-check',
+    'Spleen': 'bi-droplet-fill',
+    'Kidney': 'bi-water',
+    'Lesion': 'bi-bug-fill',
+    'Right atrium': 'bi-heart-fill',
+    'Left ventricle': 'bi-heart-pulse-fill',
+    'Right ventricle': 'bi-heart-pulse-fill',
+    'Spine': 'bi-columns-gap',
+    'Esophagus': 'bi-egg-fried',
+    'Pancreas': 'bi-droplet-half',
+    'Colon': 'bi-clipboard-data',
+    'Vertebrae': 'bi-columns-gap',
+    'Other': 'bi-question-circle-fill',
+    // Add more mappings as needed
+  };
+
+  // Function: Get category icon class
+  function getCategoryIcon(category) {
+    return categoryIconMapping[category] || 'bi-folder-fill';
+  }
+
+  // Function: Get body part icon class
+  function getBodyPartIcon(bodyPart) {
+    const mapping = {
+      'Brain': 'bi-brain',
+      'Heart': 'bi-heart-fill',
+      'Liver': 'bi-droplet-fill',
+      'Lung': 'bi-lungs-fill',
+      'Prostate': 'bi-shield-check',
+      'Kidney': 'bi-water',
+      'Spine': 'bi-columns-gap',
+      'Esophagus': 'bi-egg-fried',
+      'Pancreas': 'bi-droplet-half',
+      'Colon': 'bi-clipboard-data',
+      'Spleen': 'bi-droplet-fill',
+      'Mandible': 'bi-mortarboard',
+      'Optic': 'bi-eye-fill',
+      'Cervix': 'bi-droplet',
+      'Aorta': 'bi-arrow-up-right-circle-fill',
+      'Airway': 'bi-airplane-engines-fill',
+      'Lesion': 'bi-bug-fill',
+      'Nerve': 'bi-microscope',
+      'Vertebrae': 'bi-columns-gap',
+      'Eye': 'bi-eye-fill',
+      'Ear': 'bi-ear-fill',
+      'Spinal cord': 'bi-heart-pulse-fill',
+      'Trachea': 'bi-broadcast',
+      'Other': 'bi-question-circle-fill'
+    };
+    return mapping[bodyPart] || 'bi-question-circle-fill';
+  }
+
+  // Inject body parts and categories into the accordion within the category panel
+  const bodyPartsAccordion = document.getElementById('bodyPartsAccordion');
+
+  Object.keys(bodyParts).sort().forEach((bodyPart, index) => {
+    const collapseId = `collapse${index}`;
+    const headerId = `heading${index}`;
+    const accordionItem = document.createElement('div');
+    accordionItem.className = 'accordion-item';
+
+    accordionItem.innerHTML = `
+      <h2 class="accordion-header" id="${headerId}">
+        <button class="accordion-button ${index !== 0 ? 'collapsed' : ''}" type="button" data-bs-toggle="collapse" data-bs-target="#${collapseId}" aria-expanded="${index === 0 ? 'true' : 'false'}" aria-controls="${collapseId}">
+          <i class="${getBodyPartIcon(bodyPart)} me-2"></i> ${bodyPart}
+        </button>
+      </h2>
+      <div id="${collapseId}" class="accordion-collapse collapse ${index === 0 ? 'show' : ''}" aria-labelledby="${headerId}" data-bs-parent="#bodyPartsAccordion">
+        <div class="accordion-body">
+          <div class="row g-3">
+            ${bodyParts[bodyPart].map(category => `
+              <div class="col-6 col-md-4">
+                <button class="btn btn-outline-primary w-100 category-button" data-bs-toggle="tooltip" data-bs-placement="top" title="${category}">
+                  <i class="bi ${getCategoryIcon(category)} me-1"></i> ${category}
+                </button>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+    bodyPartsAccordion.appendChild(accordionItem);
+  });
+
+  // Initialize Bootstrap tooltips
+  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+  });
+
+  // Event delegation for category buttons
+  bodyPartsAccordion.addEventListener('click', (event) => {
+    if (event.target.closest('.category-button')) {
+      const button = event.target.closest('.category-button');
+      const category = button.textContent.trim();
+      displayDatasets(category);
+      // Hide panels
+      document.getElementById('categoryPanel').style.display = 'none';
+      document.getElementById('nlpPanel').style.display = 'none';
+      // Show main content
+      document.getElementById('mainContent').style.display = 'block';
+    }
+  });
+
+  // Function: Display selected category's datasets
+  function displayDatasets(category) {
+    const datasetListDiv = document.getElementById('dataset-list');
+    const noDatasetsDiv = document.getElementById('no-datasets');
+    const datasetInfoDiv = document.getElementById('dataset-info');
+    const datasetDetailsDiv = document.getElementById('dataset-details');
+    const datasetTitle = document.getElementById('dataset-title');
+    const cmdOutput = document.getElementById('cmd-output');
+
+    // Clear previous datasets and hide dataset info
+    datasetListDiv.innerHTML = '';
+    datasetInfoDiv.classList.add('d-none');
+    cmdOutput.classList.add('d-none');
+
+    // Filter datasets that include the selected category
+    const datasets = datasetJSON.filter(ds => {
+      const catEN = ds["Category-EN"] || "";
+      const categoriesObj = parseCategoryEN(catEN);
+      return Object.values(categoriesObj).map(c => c.trim()).includes(category);
+    });
+
+    if (datasets.length === 0) {
+      noDatasetsDiv.classList.remove('d-none');
+      noDatasetsDiv.textContent = 'No available datasets for this category.';
+      return;
+    } else {
+      noDatasetsDiv.classList.add('d-none');
+    }
+
+    // Create dataset cards
+    datasets.forEach(ds => {
+      const cardCol = document.createElement('div');
+      cardCol.className = 'col-md-6 col-lg-4';
+
+      const card = document.createElement('div');
+      card.className = 'card h-100 shadow-sm';
+      card.style.cursor = 'pointer';
+      card.innerHTML = `
+        <div class="card-body">
+          <h5 class="card-title">${ds.Dataset}</h5>
+          <p class="card-text"><strong>Framework:</strong> ${ds.Framework}</p>
+          <p class="card-text"><strong>Modality:</strong> ${ds.Modality}</p>
+          <p class="card-text"><strong>Dice Scores:</strong><br/>
+            nnunet: ${ds["Dice nnunet"]}<br/>
+            base: ${ds["Dice base"]}<br/>
+            large: ${ds["Dice large"]}<br/>
+            huge: ${ds["Dice huge"]}<br/>
+            base_ft: ${ds["Dice base_ft"]}<br/>
+            large_ft: ${ds["Dice large_ft"]}<br/>
+            huge_ft: ${ds["Dice huge_ft"]}
+          </p>
+        </div>
+      `;
+      card.addEventListener('click', () => showDatasetInfo(ds));
+      cardCol.appendChild(card);
+      datasetListDiv.appendChild(cardCol);
+    });
+  }
+
+  // Function: Show dataset details
+  function showDatasetInfo(ds) {
+    const datasetInfoDiv = document.getElementById('dataset-info');
+    const datasetDetailsDiv = document.getElementById('dataset-details');
+    const datasetTitle = document.getElementById('dataset-title');
+    const cmdOutput = document.getElementById('cmd-output');
+
+    datasetInfoDiv.classList.remove('d-none');
+    datasetTitle.textContent = `${ds.Dataset} Information`;
+
+    // Exclude 'Category-CN' field
+    const excludedFields = ['Category-CN'];
+
+    let html = '<table class="table table-bordered">';
+    for (let key in ds) {
+      if (excludedFields.includes(key)) continue;
+      html += `
+        <tr>
+          <th style="width: 40%;">${key}</th>
+          <td>${ds[key]}</td>
+        </tr>
+      `;
+    }
+    html += '</table>';
+    datasetDetailsDiv.innerHTML = html;
+
+    // Hide previous CMD output
+    cmdOutput.classList.add('d-none');
+  }
+
+  // CMD button functionality
+  const cmdButton = document.getElementById('cmd-button');
+  const cmdOutput = document.getElementById('cmd-output');
+
+  cmdButton.addEventListener('click', () => {
+    cmdOutput.textContent = 'cmd xx';
+    cmdOutput.classList.remove('d-none');
+  });
+
+  // Natural Language Input functionality
+  const nlpInput = document.getElementById('nlp-input');
+  const nlpCmdOutput = document.getElementById('nlp-cmd-output');
+
+  nlpInput.addEventListener('input', () => {
+    const val = nlpInput.value.trim();
+    if (val) {
+      nlpCmdOutput.textContent = `cmd -i "${val}"`;
+      nlpCmdOutput.classList.remove('d-none');
+    } else {
+      nlpCmdOutput.classList.add('d-none');
+    }
+  });
+
+  // Handle NLP input submission
+  nlpInput.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      const val = nlpInput.value.trim();
+      if (val) {
+        // Here you can implement logic to process the NLP input
+        // For simplicity, we'll display the CMD and show relevant datasets if possible
+        nlpCmdOutput.textContent = `cmd -i "${val}"`;
+        nlpCmdOutput.classList.remove('d-none');
+        
+        // Example: Filter datasets where the category includes any keyword from the input
+        const inputKeywords = val.split(' ').map(word => word.toLowerCase());
+        const filteredDatasets = datasetJSON.filter(ds => {
+          const catEN = ds["Category-EN"] || "";
+          const categoriesObj = parseCategoryEN(catEN);
+          return Object.values(categoriesObj).some(c => {
+            const categoryLower = c.trim().toLowerCase();
+            return inputKeywords.some(keyword => categoryLower.includes(keyword));
+          });
+        });
+
+        // Display datasets based on NLP input
+        const datasetListDiv = document.getElementById('dataset-list');
+        const noDatasetsDiv = document.getElementById('no-datasets');
+        const datasetInfoDiv = document.getElementById('dataset-info');
+        const datasetDetailsDiv = document.getElementById('dataset-details');
+        const datasetTitle = document.getElementById('dataset-title');
+
+        // Clear previous datasets and hide dataset info
+        datasetListDiv.innerHTML = '';
+        datasetInfoDiv.classList.add('d-none');
+
+        if (filteredDatasets.length === 0) {
+          noDatasetsDiv.classList.remove('d-none');
+          noDatasetsDiv.textContent = 'No available datasets match your description.';
+          return;
+        } else {
+          noDatasetsDiv.classList.add('d-none');
+        }
+
+        // Show main content
+        document.getElementById('mainContent').style.display = 'block';
+
+        // Create dataset cards
+        filteredDatasets.forEach(ds => {
+          const cardCol = document.createElement('div');
+          cardCol.className = 'col-md-6 col-lg-4';
+
+          const card = document.createElement('div');
+          card.className = 'card h-100 shadow-sm';
+          card.style.cursor = 'pointer';
+          card.innerHTML = `
+            <div class="card-body">
+              <h5 class="card-title">${ds.Dataset}</h5>
+              <p class="card-text"><strong>Framework:</strong> ${ds.Framework}</p>
+              <p class="card-text"><strong>Modality:</strong> ${ds.Modality}</p>
+              <p class="card-text"><strong>Dice Scores:</strong><br/>
+                nnunet: ${ds["Dice nnunet"]}<br/>
+                base: ${ds["Dice base"]}<br/>
+                large: ${ds["Dice large"]}<br/>
+                huge: ${ds["Dice huge"]}<br/>
+                base_ft: ${ds["Dice base_ft"]}<br/>
+                large_ft: ${ds["Dice large_ft"]}<br/>
+                huge_ft: ${ds["Dice huge_ft"]}
+              </p>
+            </div>
+          `;
+          card.addEventListener('click', () => showDatasetInfo(ds));
+          cardCol.appendChild(card);
+          datasetListDiv.appendChild(cardCol);
+        });
+      }
+    }
+  });
+  </script>
+
+</body>
+</html>
