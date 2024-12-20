@@ -1,83 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MedSegModelZoo Explorer</title>
-  
+
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  
+
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  
+
   <!-- Bootstrap Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-  
+
   <style>
+    :root {
+      --primary-color: #6A82FB; /* Start color of the gradient */
+      --secondary-color: #FC5C7D; /* End color of the gradient */
+      --background-color: #f8f9fa;
+      --text-color: #212529;
+      --header-background: #ffffff;
+      --nav-background: #343a40;
+      --button-background: #6A82FB;
+      --button-hover: #FC5C7D;
+    }
+
     body {
       font-family: 'Roboto', sans-serif;
-      background-color: #f8f9fa;
-      color: #212529;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      margin: 0;
+      overflow-x: hidden;
     }
-    
-    /* Header styling */
-    .header {
+
+    /* Landing Page */
+    .landing-page {
+      height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      margin-top: 50px;
-      margin-bottom: 50px;
+      /* background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); */
+      /* Gradient background */
+      background: #FC5C7D;
+      background: -webkit-linear-gradient(to right, var(--primary-color), var(--secondary-color));
+      background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
       position: relative;
+      overflow: hidden;
     }
-    
+
+    .landing-content {
+      text-align: center;
+      color: white;
+      z-index: 2;
+      padding: 2rem;
+    }
+
+    .landing-logo {
+      width: 150px;
+      height: 150px;
+      margin-bottom: 2rem;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .landing-title {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 1s forwards;
+    }
+
+    .landing-subtitle {
+      font-size: 1.5rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 1s forwards 0.3s;
+    }
+
+    /* Floating Panels */
+    .side-panel {
+      position: fixed;
+      top: 0;
+      height: 100vh;
+      width: 400px;
+      background: var(--panel-bg);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    #categoryPanel {
+      left: 1%;
+      transform: translateX(-100%);
+    }
+
+    #nlpPanel {
+      right: 1%;
+      transform: translateX(100%);
+    }
+
+    .show-panel {
+      transform: translateX(0) !important;
+    }
+
+    /* Content Area */
+    .main-content {
+      margin-top: 2rem;
+      padding: 2rem;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .show-content {
+      opacity: 1;
+    }
+
+    /* Animations */
+    @keyframes float {
+      0% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-20px);
+      }
+
+      100% {
+        transform: translateY(0px);
+      }
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Card Styling */
+    .dataset-card {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+
+    .dataset-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Header Styles for Home Page */
+    header.homepage {
+        position: relative;
+        height: 100vh;
+        color: white;
+        text-align: center;
+    }
+
     .header i {
       font-size: 2.5rem;
       margin-right: 15px;
       color: #0d6efd;
     }
-    
+
     /* Floating Panels */
     .floating-panel {
-      position: fixed;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 45%; /* 调整宽度从350px到45% */
+      width: 45%; /* Adjusted width */
       max-width: 90%;
       background-color: #ffffff;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       border-radius: 10px;
       z-index: 1050;
       padding: 20px;
       overflow-y: auto;
       height: 80%;
     }
-    
-    /* Category Panel */
-    #categoryPanel {
-      left: 1%; /* 调整位置从20px到1% */
-    }
-    
-    /* NLP Panel */
-    #nlpPanel {
-      right: 1%; /* 调整位置从20px到1% */
-    }
-    
+
     /* Modal adjustments */
     .modal-lg {
       max-width: 80% !important;
     }
-    
+
     /* Enhance card appearance */
     .card {
       transition: transform 0.2s, box-shadow 0.2s;
     }
-    
+
     .card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     }
-    
+
     /* Tooltip styling */
     .tooltip-inner {
       max-width: 200px;
@@ -86,37 +208,40 @@
       color: #fff;
       font-size: 0.875rem;
     }
-    
+
     /* Scrollbar styling for panels */
     .floating-panel::-webkit-scrollbar {
       width: 8px;
     }
+
     .floating-panel::-webkit-scrollbar-thumb {
       background-color: rgba(100, 116, 139, 0.5);
       border-radius: 4px;
     }
-    
+
     /* Button styling */
     .btn-category {
       margin-bottom: 10px;
     }
-    
+
     /* Hide main content initially */
     #mainContent {
       display: none;
     }
-    
+
     /* Back Button Styling */
     #back-button {
-      display: none; /* 初始隐藏 */
+      display: none; /* Initially hidden */
+      margin-top: 2rem; /* Adjusted margin */
     }
-    
+
     /* Adjust main content to take remaining space */
     @media (min-width: 992px) {
       #mainContent .col-lg-8 {
         flex: 0 0 50%;
         max-width: 50%;
       }
+
       #mainContent .col-lg-4 {
         flex: 0 0 50%;
         max-width: 50%;
@@ -124,25 +249,30 @@
     }
   </style>
 </head>
+
 <body>
-  
-  <!-- Header with Icon -->
-  <div class="header">
-    <img src="icon.jpg" class="icon"/> &nbsp;&nbsp;
-    <h1 class="display-4">MedSegModelZoo Explorer</h1>
+  <!-- Landing Page -->
+  <div class="landing-page">
+    <div class="landing-content">
+      <img src="icon.jpg" alt="Logo" class="landing-logo">
+      <h1 class="landing-title">MedSegModelZoo Explorer</h1>
+      <p class="landing-subtitle">Explore Medical Segmentation Models</p>
+    </div>
   </div>
-  
+
   <!-- Main Content Area -->
-  <div class="container" id="mainContent">
-    <!-- 回退按钮 -->
+  <div class="container main-content" id="mainContent">
+
+    <!-- Back Button -->
     <div class="row mb-3">
-      <div class="col-12">
-        <button id="back-button" class="btn btn-secondary">back</button>
+      <div class="col-12 text-center">
+        <button id="back-button" class="btn btn-secondary">Back</button>
       </div>
     </div>
+
     <div class="row">
       <!-- Dataset List -->
-      <div class="col-lg-6 mb-4"> 
+      <div class="col-lg-6 mb-4">
         <h2 class="h4 mb-3">Datasets</h2>
         <div id="dataset-list" class="row g-3">
           <!-- Dataset cards will be injected here -->
@@ -151,7 +281,7 @@
       </div>
 
       <!-- Dataset Details -->
-      <div id="dataset-info" class="col-lg-6 p-4 bg-white shadow rounded d-none"> <!-- 从col-lg-4改为col-lg-6 -->
+      <div id="dataset-info" class="col-lg-6 p-4 bg-white shadow rounded d-none">
         <h4 id="dataset-title" class="mb-3">Dataset Information</h4>
         <div id="dataset-details" class="mb-3" style="max-height: 400px; overflow-y: auto;">
           <!-- Dataset details will be injected here -->
@@ -163,29 +293,28 @@
   </div>
 
   <!-- Floating Panels -->
-  
+
   <!-- Category Selection Panel -->
-  <div class="floating-panel" id="categoryPanel">
+  <div class="side-panel floating-panel" id="categoryPanel">
     <h5 class="mb-3"><i class="bi bi-list-task me-2"></i> Select Category</h5>
     <div class="accordion" id="bodyPartsAccordion">
       <!-- Categories will be injected here -->
     </div>
   </div>
-  
+
   <!-- Natural Language Input Panel -->
-  <div class="floating-panel" id="nlpPanel">
+  <div class="side-panel floating-panel" id="nlpPanel">
     <h5 class="mb-3"><i class="bi bi-chat-dots me-2"></i> Natural Language Input</h5>
     <input type="text" id="nlp-input" class="form-control mb-3" placeholder="Enter natural language description..." />
     <div id="nlp-cmd-output" class="alert alert-secondary d-none">cmd -i </div>
   </div>
-  
+
   <!-- Bootstrap JS and dependencies -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  
+
   <script>
-  // Dataset JSON
-  const datasetJSON = 
-  [
+    // Dataset JSON
+    const datasetJSON = [
     {
         "Dataset": "Task001_BrainTumour",
         "Framework": "nnunet_v1",
@@ -1839,326 +1968,209 @@
         "Dice large_ft": "0.6603",
         "Dice huge_ft": "0.6396"
     }
-].concat([]); // Ensure the full JSON array is included
-    
-  // Function: Parse Category-EN string to object
-  function parseCategoryEN(catStr) {
-    try {
-      return JSON.parse(catStr.replace(/'/g, '"'));
-    } catch (e) {
-      console.error('Error parsing Category-EN:', catStr, e);
-      return {};
-    }
-  }
+];
 
-  // Extract unique body parts and categories
-  const bodyParts = {}; // { bodyPart: Set(categories) }
+    // Animation and interaction logic
+    document.addEventListener('DOMContentLoaded', () => {
+      // Show floating panels after 1 second
+      setTimeout(() => {
+        document.getElementById('categoryPanel').classList.add('show-panel');
+        document.getElementById('nlpPanel').classList.add('show-panel');
+      }, 1000);
 
-  datasetJSON.forEach(ds => {
-    const catEN = ds["Category-EN"] || "";
-    const categoriesObj = parseCategoryEN(catEN);
-    for (let key in categoriesObj) {
-      if (key === '0' || categoriesObj[key].toLowerCase() === 'background') continue;
-      const category = categoriesObj[key].trim();
-      // Assume category name contains body part keywords; adjust as needed
-      let bodyPart = 'Other';
-      const bodyPartKeywords = ['Brain', 'Heart', 'Liver', 'Lung', 'Prostate', 'Kidney', 'Spine', 'Esophagus', 'Pancreas', 'Colon', 'Spleen', 'Mandible', 'Optic', 'Cervix', 'Aorta', 'Airway', 'Lesion', 'Nerve', 'Vertebrae', 'Eye', 'Ear', 'Spinal cord', 'Trachea'];
-      for (let keyword of bodyPartKeywords) {
-        if (category.includes(keyword)) {
-          bodyPart = keyword;
-          break;
+      // Function: Parse Category-EN string to object
+      function parseCategoryEN(catStr) {
+        try {
+          return JSON.parse(catStr.replace(/'/g, '"'));
+        } catch (e) {
+          console.error('Error parsing Category-EN:', catStr, e);
+          return {};
         }
       }
-      if (!bodyParts[bodyPart]) bodyParts[bodyPart] = new Set();
-      bodyParts[bodyPart].add(category);
-    }
-  });
 
-  // Convert Sets to arrays and sort
-  for (let bodyPart in bodyParts) {
-    bodyParts[bodyPart] = Array.from(bodyParts[bodyPart]).sort();
-  }
+      // Extract unique body parts and categories
+      const bodyParts = {}; // { bodyPart: Set(categories) }
+      datasetJSON.forEach(ds => {
+        const catEN = ds["Category-EN"] || "";
+        const categoriesObj = parseCategoryEN(catEN);
+        for (let key in categoriesObj) {
+          if (key === '0' || categoriesObj[key].toLowerCase() === 'background') continue;
+          const category = categoriesObj[key].trim();
+          // Assume category name contains body part keywords; adjust as needed
+          let bodyPart = 'Other';
+          const bodyPartKeywords = ['Brain', 'Heart', 'Liver', 'Lung', 'Prostate', 'Kidney', 'Spine', 'Esophagus', 'Pancreas', 'Colon', 'Spleen', 'Mandible', 'Optic', 'Cervix', 'Aorta', 'Airway', 'Lesion', 'Nerve', 'Vertebrae', 'Eye', 'Ear', 'Spinal cord', 'Trachea'];
+          for (let keyword of bodyPartKeywords) {
+            if (category.includes(keyword)) {
+              bodyPart = keyword;
+              break;
+            }
+          }
+          if (!bodyParts[bodyPart]) bodyParts[bodyPart] = new Set();
+          bodyParts[bodyPart].add(category);
+        }
+      });
 
-  // Mapping categories to Bootstrap Icons
-  const categoryIconMapping = {
-    'Edema': 'bi-droplet-half',
-    'Non-enhancing tumor': 'bi-bezier',
-    'Enhancing tumor': 'bi-stars',
-    'Left atrium': 'bi-heart-fill',
-    'Liver': 'bi-droplet-fill',
-    'Heart': 'bi-heart-fill',
-    'Lung cancer': 'bi-lungs-fill',
-    'Prostate peripheral zone': 'bi-shield-check',
-    'Spleen': 'bi-droplet-fill',
-    'Kidney': 'bi-water',
-    'Lesion': 'bi-bug-fill',
-    'Right atrium': 'bi-heart-fill',
-    'Left ventricle': 'bi-heart-pulse-fill',
-    'Right ventricle': 'bi-heart-pulse-fill',
-    'Spine': 'bi-columns-gap',
-    'Esophagus': 'bi-egg-fried',
-    'Pancreas': 'bi-droplet-half',
-    'Colon': 'bi-clipboard-data',
-    'Vertebrae': 'bi-columns-gap',
-    'Other': 'bi-question-circle-fill',
-    // Add more mappings as needed
-  };
+      // Convert Sets to arrays and sort
+      for (let bodyPart in bodyParts) {
+        bodyParts[bodyPart] = Array.from(bodyParts[bodyPart]).sort();
+      }
 
-  // Function: Get category icon class
-  function getCategoryIcon(category) {
-    return categoryIconMapping[category] || 'bi-folder-fill';
-  }
+      // Mapping categories to Bootstrap Icons
+      const categoryIconMapping = {
+        'Edema': 'bi-droplet-half',
+        'Non-enhancing tumor': 'bi-bezier',
+        'Enhancing tumor': 'bi-stars',
+        'Left atrium': 'bi-heart-fill',
+        'Liver': 'bi-droplet-fill',
+        'Heart': 'bi-heart-fill',
+        'Lung cancer': 'bi-lungs-fill',
+        'Prostate peripheral zone': 'bi-shield-check',
+        'Spleen': 'bi-droplet-fill',
+        'Kidney': 'bi-water',
+        'Lesion': 'bi-bug-fill',
+        'Right atrium': 'bi-heart-fill',
+        'Left ventricle': 'bi-heart-pulse-fill',
+        'Right ventricle': 'bi-heart-pulse-fill',
+        'Spine': 'bi-columns-gap',
+        'Esophagus': 'bi-egg-fried',
+        'Pancreas': 'bi-droplet-half',
+        'Colon': 'bi-clipboard-data',
+        'Vertebrae': 'bi-columns-gap',
+        'Other': 'bi-question-circle-fill',
+        // Add more mappings as needed
+      };
 
-  // Function: Get body part icon class
-  function getBodyPartIcon(bodyPart) {
-    const mapping = {
-      'Brain': 'bi-brain',
-      'Heart': 'bi-heart-fill',
-      'Liver': 'bi-droplet-fill',
-      'Lung': 'bi-lungs-fill',
-      'Prostate': 'bi-shield-check',
-      'Kidney': 'bi-water',
-      'Spine': 'bi-columns-gap',
-      'Esophagus': 'bi-egg-fried',
-      'Pancreas': 'bi-droplet-half',
-      'Colon': 'bi-clipboard-data',
-      'Spleen': 'bi-droplet-fill',
-      'Mandible': 'bi-mortarboard',
-      'Optic': 'bi-eye-fill',
-      'Cervix': 'bi-droplet',
-      'Aorta': 'bi-arrow-up-right-circle-fill',
-      'Airway': 'bi-airplane-engines-fill',
-      'Lesion': 'bi-bug-fill',
-      'Nerve': 'bi-microscope',
-      'Vertebrae': 'bi-columns-gap',
-      'Eye': 'bi-eye-fill',
-      'Ear': 'bi-ear-fill',
-      'Spinal cord': 'bi-heart-pulse-fill',
-      'Trachea': 'bi-broadcast',
-      'Other': 'bi-question-circle-fill'
-    };
-    return mapping[bodyPart] || 'bi-question-circle-fill';
-  }
+      // Function: Get category icon class
+      function getCategoryIcon(category) {
+        return categoryIconMapping[category] || 'bi-folder-fill';
+      }
 
-  // Inject body parts and categories into the accordion within the category panel
-  const bodyPartsAccordion = document.getElementById('bodyPartsAccordion');
+      // Function: Get body part icon class
+      function getBodyPartIcon(bodyPart) {
+        const mapping = {
+          'Brain': 'bi-brain',
+          'Heart': 'bi-heart-fill',
+          'Liver': 'bi-droplet-fill',
+          'Lung': 'bi-lungs-fill',
+          'Prostate': 'bi-shield-check',
+          'Kidney': 'bi-water',
+          'Spine': 'bi-columns-gap',
+          'Esophagus': 'bi-egg-fried',
+          'Pancreas': 'bi-droplet-half',
+          'Colon': 'bi-clipboard-data',
+          'Spleen': 'bi-droplet-fill',
+          'Mandible': 'bi-mortarboard',
+          'Optic': 'bi-eye-fill',
+          'Cervix': 'bi-droplet',
+          'Aorta': 'bi-arrow-up-right-circle-fill',
+          'Airway': 'bi-airplane-engines-fill',
+          'Lesion': 'bi-bug-fill',
+          'Nerve': 'bi-microscope',
+          'Vertebrae': 'bi-columns-gap',
+          'Eye': 'bi-eye-fill',
+          'Ear': 'bi-ear-fill',
+          'Spinal cord': 'bi-heart-pulse-fill',
+          'Trachea': 'bi-broadcast',
+          'Other': 'bi-question-circle-fill'
+        };
+        return mapping[bodyPart] || 'bi-question-circle-fill';
+      }
 
-  Object.keys(bodyParts).sort().forEach((bodyPart, index) => {
-    const collapseId = `collapse${index}`;
-    const headerId = `heading${index}`;
-    const accordionItem = document.createElement('div');
-    accordionItem.className = 'accordion-item';
-
-    accordionItem.innerHTML = `
-      <h2 class="accordion-header" id="${headerId}">
-        <button class="accordion-button ${index !== 0 ? 'collapsed' : ''}" type="button" data-bs-toggle="collapse" data-bs-target="#${collapseId}" aria-expanded="${index === 0 ? 'true' : 'false'}" aria-controls="${collapseId}">
-          <i class="${getBodyPartIcon(bodyPart)} me-2"></i> ${bodyPart}
-        </button>
-      </h2>
-      <div id="${collapseId}" class="accordion-collapse collapse ${index === 0 ? 'show' : ''}" aria-labelledby="${headerId}" data-bs-parent="#bodyPartsAccordion">
-        <div class="accordion-body">
-          <div class="row g-3">
-            ${bodyParts[bodyPart].map(category => `
-              <div class="col-6 col-md-4">
-                <button class="btn btn-outline-primary w-100 category-button" data-bs-toggle="tooltip" data-bs-placement="top" title="${category}">
-                  <i class="bi ${getCategoryIcon(category)} me-1"></i> ${category}
-                </button>
+      // Inject body parts and categories into the accordion within the category panel
+      const bodyPartsAccordion = document.getElementById('bodyPartsAccordion');
+      Object.keys(bodyParts).sort().forEach((bodyPart, index) => {
+        const collapseId = `collapse${index}`;
+        const headerId = `heading${index}`;
+        const accordionItem = document.createElement('div');
+        accordionItem.className = 'accordion-item';
+        accordionItem.innerHTML = `
+          <h2 class="accordion-header" id="${headerId}">
+            <button class="accordion-button ${index !== 0 ? 'collapsed' : ''}" type="button" data-bs-toggle="collapse" data-bs-target="#${collapseId}" aria-expanded="${index === 0 ? 'true' : 'false'}" aria-controls="${collapseId}">
+              <i class="${getBodyPartIcon(bodyPart)} me-2"></i> ${bodyPart}
+            </button>
+          </h2>
+          <div id="${collapseId}" class="accordion-collapse collapse ${index === 0 ? 'show' : ''}" aria-labelledby="${headerId}" data-bs-parent="#bodyPartsAccordion">
+            <div class="accordion-body">
+              <div class="row g-3">
+                ${bodyParts[bodyPart].map(category => `
+                  <div class="col-6 col-md-4">
+                    <button class="btn btn-outline-primary w-100 category-button" data-bs-toggle="tooltip" data-bs-placement="top" title="${category}">
+                      <i class="bi ${getCategoryIcon(category)} me-1"></i> ${category}
+                    </button>
+                  </div>
+                `).join('')}
               </div>
-            `).join('')}
+            </div>
           </div>
-        </div>
-      </div>
-    `;
-    bodyPartsAccordion.appendChild(accordionItem);
-  });
+        `;
+        bodyPartsAccordion.appendChild(accordionItem);
+      });
 
-  // Initialize Bootstrap tooltips
-  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-  const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl);
-  });
+      // Initialize Bootstrap tooltips
+      const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+      const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+      });
 
-  // Event delegation for category buttons
-  bodyPartsAccordion.addEventListener('click', (event) => {
-    if (event.target.closest('.category-button')) {
-      const button = event.target.closest('.category-button');
-      const category = button.textContent.trim();
-      displayDatasets(category);
-      // Hide panels
-      document.getElementById('categoryPanel').style.display = 'none';
-      document.getElementById('nlpPanel').style.display = 'none';
-      // Show main content
-      document.getElementById('mainContent').style.display = 'block';
-      // Show back button
-      document.getElementById('back-button').style.display = 'block';
-    }
-  });
+      // Event delegation for category buttons
+      bodyPartsAccordion.addEventListener('click', (event) => {
+        if (event.target.closest('.category-button')) {
+          const button = event.target.closest('.category-button');
+          const category = button.textContent.trim();
+          displayDatasets(category);
 
-  // Function: Display selected category's datasets
-  function displayDatasets(category) {
-    const datasetListDiv = document.getElementById('dataset-list');
-    const noDatasetsDiv = document.getElementById('no-datasets');
-    const datasetInfoDiv = document.getElementById('dataset-info');
-    const datasetDetailsDiv = document.getElementById('dataset-details');
-    const datasetTitle = document.getElementById('dataset-title');
-    const cmdOutput = document.getElementById('cmd-output');
+          // Hide panels by removing 'show-panel' class
+          document.getElementById('categoryPanel').classList.remove('show-panel');
+          document.getElementById('nlpPanel').classList.remove('show-panel');
 
-    // Clear previous datasets and hide dataset info
-    datasetListDiv.innerHTML = '';
-    datasetInfoDiv.classList.add('d-none');
-    cmdOutput.classList.add('d-none');
+          // Show main content
+          document.getElementById('mainContent').style.display = 'block';
+          document.getElementById('mainContent').classList.add('show-content');
 
-    // Filter datasets that include the selected category
-    const datasets = datasetJSON.filter(ds => {
-      const catEN = ds["Category-EN"] || "";
-      const categoriesObj = parseCategoryEN(catEN);
-      return Object.values(categoriesObj).map(c => c.trim()).includes(category);
-    });
+          // Show back button
+          document.getElementById('back-button').style.display = 'block';
 
-    if (datasets.length === 0) {
-      noDatasetsDiv.classList.remove('d-none');
-      noDatasetsDiv.textContent = 'No available datasets for this category.';
-      return;
-    } else {
-      noDatasetsDiv.classList.add('d-none');
-    }
+          // Scroll to dataset list
+          setTimeout(() => {
+            document.getElementById('dataset-list').scrollIntoView({ behavior: 'smooth' });
+          }, 300); // Slight delay to ensure content is rendered
+        }
+      });
 
-    // Create dataset cards
-    datasets.forEach(ds => {
-      const cardCol = document.createElement('div');
-      cardCol.className = 'col-md-6 col-lg-4';
-
-      const card = document.createElement('div');
-      card.className = 'card h-100 shadow-sm';
-      card.style.cursor = 'pointer';
-      card.innerHTML = `
-        <div class="card-body">
-          <h5 class="card-title">${ds.Dataset}</h5>
-          <p class="card-text"><strong>Framework:</strong> ${ds.Framework}</p>
-          <p class="card-text"><strong>Modality:</strong> ${ds.Modality}</p>
-          <p class="card-text"><strong>Dice Scores:</strong><br/>
-            nnunet: ${ds["Dice nnunet"]}<br/>
-            base: ${ds["Dice base"]}<br/>
-            large: ${ds["Dice large"]}<br/>
-            huge: ${ds["Dice huge"]}<br/>
-            base_ft: ${ds["Dice base_ft"]}<br/>
-            large_ft: ${ds["Dice large_ft"]}<br/>
-            huge_ft: ${ds["Dice huge_ft"]}
-          </p>
-        </div>
-      `;
-      card.addEventListener('click', () => showDatasetInfo(ds));
-      cardCol.appendChild(card);
-      datasetListDiv.appendChild(cardCol);
-    });
-  }
-
-  // Function: Show dataset details
-  function showDatasetInfo(ds) {
-    const datasetInfoDiv = document.getElementById('dataset-info');
-    const datasetDetailsDiv = document.getElementById('dataset-details');
-    const datasetTitle = document.getElementById('dataset-title');
-    const cmdOutput = document.getElementById('cmd-output');
-
-    datasetInfoDiv.classList.remove('d-none');
-    datasetTitle.textContent = `${ds.Dataset} Information`;
-
-    // Exclude 'Category-CN' field
-    const excludedFields = ['Category-CN'];
-
-    let html = '<table class="table table-bordered">';
-    for (let key in ds) {
-      if (excludedFields.includes(key)) continue;
-      html += `
-        <tr>
-          <th style="width: 40%;">${key}</th>
-          <td>${ds[key]}</td>
-        </tr>
-      `;
-    }
-    html += '</table>';
-    datasetDetailsDiv.innerHTML = html;
-
-    // Hide previous CMD output
-    cmdOutput.classList.add('d-none');
-  }
-
-  // CMD button functionality
-  const cmdButton = document.getElementById('cmd-button');
-  const cmdOutput = document.getElementById('cmd-output');
-
-  cmdButton.addEventListener('click', () => {
-    cmdOutput.textContent = 'cmd xx';
-    cmdOutput.classList.remove('d-none');
-  });
-
-  // Natural Language Input functionality
-  const nlpInput = document.getElementById('nlp-input');
-  const nlpCmdOutput = document.getElementById('nlp-cmd-output');
-
-  nlpInput.addEventListener('input', () => {
-    const val = nlpInput.value.trim();
-    if (val) {
-      nlpCmdOutput.textContent = `cmd -i "${val}"`;
-      nlpCmdOutput.classList.remove('d-none');
-    } else {
-      nlpCmdOutput.classList.add('d-none');
-    }
-  });
-
-  // Handle NLP input submission
-  nlpInput.addEventListener('keypress', (event) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      const val = nlpInput.value.trim();
-      if (val) {
-        // Here you can implement logic to process the NLP input
-        // For simplicity, we'll display the CMD and show relevant datasets if possible
-        nlpCmdOutput.textContent = `cmd -i "${val}"`;
-        nlpCmdOutput.classList.remove('d-none');
-        
-        // Example: Filter datasets where the category includes any keyword from the input
-        const inputKeywords = val.split(' ').map(word => word.toLowerCase());
-        const filteredDatasets = datasetJSON.filter(ds => {
-          const catEN = ds["Category-EN"] || "";
-          const categoriesObj = parseCategoryEN(catEN);
-          return Object.values(categoriesObj).some(c => {
-            const categoryLower = c.trim().toLowerCase();
-            return inputKeywords.some(keyword => categoryLower.includes(keyword));
-          });
-        });
-
-        // Display datasets based on NLP input
+      // Function: Display selected category's datasets
+      function displayDatasets(category) {
         const datasetListDiv = document.getElementById('dataset-list');
         const noDatasetsDiv = document.getElementById('no-datasets');
         const datasetInfoDiv = document.getElementById('dataset-info');
-        const datasetDetailsDiv = document.getElementById('dataset-details');
         const datasetTitle = document.getElementById('dataset-title');
+        const cmdOutput = document.getElementById('cmd-output');
 
         // Clear previous datasets and hide dataset info
         datasetListDiv.innerHTML = '';
         datasetInfoDiv.classList.add('d-none');
+        cmdOutput.classList.add('d-none');
 
-        if (filteredDatasets.length === 0) {
+        // Filter datasets that include the selected category
+        const datasets = datasetJSON.filter(ds => {
+          const catEN = ds["Category-EN"] || "";
+          const categoriesObj = parseCategoryEN(catEN);
+          return Object.values(categoriesObj).map(c => c.trim()).includes(category);
+        });
+
+        if (datasets.length === 0) {
           noDatasetsDiv.classList.remove('d-none');
-          noDatasetsDiv.textContent = 'No available datasets match your description.';
+          noDatasetsDiv.textContent = 'No available datasets for this category.';
           return;
         } else {
           noDatasetsDiv.classList.add('d-none');
         }
 
-        // Show main content
-        document.getElementById('mainContent').style.display = 'block';
-        // Show back button
-        document.getElementById('back-button').style.display = 'block';
-
         // Create dataset cards
-        filteredDatasets.forEach(ds => {
+        datasets.forEach(ds => {
           const cardCol = document.createElement('div');
           cardCol.className = 'col-md-6 col-lg-4';
-
           const card = document.createElement('div');
-          card.className = 'card h-100 shadow-sm';
+          card.className = 'card h-100 shadow-sm dataset-card';
           card.style.cursor = 'pointer';
           card.innerHTML = `
             <div class="card-body">
@@ -2181,35 +2193,178 @@
           datasetListDiv.appendChild(cardCol);
         });
       }
-  }
-});
 
-  // Back button functionality
-  const backButton = document.getElementById('back-button');
-  backButton.addEventListener('click', () => {
-    // Hide main content
-    document.getElementById('mainContent').style.display = 'none';
-    // Show floating panels
-    document.getElementById('categoryPanel').style.display = 'block';
-    document.getElementById('nlpPanel').style.display = 'block';
-    // Hide back button
-    backButton.style.display = 'none';
-    // Hide dataset info if visible
-    document.getElementById('dataset-info').classList.add('d-none');
-    // Optionally, clear dataset list
-    document.getElementById('dataset-list').innerHTML = '';
-    // Clear any CMD outputs
-    document.getElementById('cmd-output').classList.add('d-none');
-    document.getElementById('nlp-cmd-output').classList.add('d-none');
-  });
-  window.addEventListener("load", () => {
-    const headerText = document.querySelector(".display-4");
-    const iconImg = document.querySelector(".icon");
-    const fontSize = window.getComputedStyle(headerText).fontSize;
-    iconImg.style.height = fontSize;
-    iconImg.style.width = "auto"; // 保持宽高比
-  });
+      // Function: Show dataset details
+      function showDatasetInfo(ds) {
+        const datasetInfoDiv = document.getElementById('dataset-info');
+        const datasetDetailsDiv = document.getElementById('dataset-details');
+        const datasetTitle = document.getElementById('dataset-title');
+        const cmdOutput = document.getElementById('cmd-output');
+
+        datasetInfoDiv.classList.remove('d-none');
+        datasetTitle.textContent = `${ds.Dataset} Information`;
+
+        // Exclude 'Category-CN' field
+        const excludedFields = ['Category-CN'];
+        let html = '<table class="table table-bordered">';
+        for (let key in ds) {
+          if (excludedFields.includes(key)) continue;
+          html += `
+            <tr>
+              <th style="width: 40%;">${key}</th>
+              <td>${ds[key]}</td>
+            </tr>
+          `;
+        }
+        html += '</table>';
+        datasetDetailsDiv.innerHTML = html;
+
+        // Hide previous CMD output
+        cmdOutput.classList.add('d-none');
+      }
+
+      // CMD button functionality
+      const cmdButton = document.getElementById('cmd-button');
+      const cmdOutput = document.getElementById('cmd-output');
+      cmdButton.addEventListener('click', () => {
+        cmdOutput.textContent = 'cmd xx';
+        cmdOutput.classList.remove('d-none');
+
+        // Scroll to CMD output
+        setTimeout(() => {
+          cmdOutput.scrollIntoView({ behavior: 'smooth' });
+        }, 300); // Slight delay to ensure CMD is rendered
+      });
+
+      // Natural Language Input functionality
+      const nlpInput = document.getElementById('nlp-input');
+      const nlpCmdOutput = document.getElementById('nlp-cmd-output');
+      nlpInput.addEventListener('input', () => {
+        const val = nlpInput.value.trim();
+        if (val) {
+          nlpCmdOutput.textContent = `cmd -i "${val}"`;
+          nlpCmdOutput.classList.remove('d-none');
+        } else {
+          nlpCmdOutput.classList.add('d-none');
+        }
+      });
+
+      // Handle NLP input submission
+      nlpInput.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          const val = nlpInput.value.trim();
+          if (val) {
+            // Display the CMD
+            nlpCmdOutput.textContent = `cmd -i "${val}"`;
+            nlpCmdOutput.classList.remove('d-none');
+
+            // Example: Filter datasets where the category includes any keyword from the input
+            const inputKeywords = val.split(' ').map(word => word.toLowerCase());
+            const filteredDatasets = datasetJSON.filter(ds => {
+              const catEN = ds["Category-EN"] || "";
+              const categoriesObj = parseCategoryEN(catEN);
+              return Object.values(categoriesObj).some(c => {
+                const categoryLower = c.trim().toLowerCase();
+                return inputKeywords.some(keyword => categoryLower.includes(keyword));
+              });
+            });
+
+            // Display datasets based on NLP input
+            const datasetListDiv = document.getElementById('dataset-list');
+            const noDatasetsDiv = document.getElementById('no-datasets');
+            const datasetInfoDiv = document.getElementById('dataset-info');
+            const datasetTitle = document.getElementById('dataset-title');
+
+            // Clear previous datasets and hide dataset info
+            datasetListDiv.innerHTML = '';
+            datasetInfoDiv.classList.add('d-none');
+
+            if (filteredDatasets.length === 0) {
+              noDatasetsDiv.classList.remove('d-none');
+              noDatasetsDiv.textContent = 'No available datasets match your description.';
+              return;
+            } else {
+              noDatasetsDiv.classList.add('d-none');
+            }
+
+            // Show main content and back button if not already visible
+            document.getElementById('mainContent').style.display = 'block';
+            document.getElementById('mainContent').classList.add('show-content');
+            document.getElementById('back-button').style.display = 'block';
+
+            // Create dataset cards
+            filteredDatasets.forEach(ds => {
+              const cardCol = document.createElement('div');
+              cardCol.className = 'col-md-6 col-lg-4';
+              const card = document.createElement('div');
+              card.className = 'card h-100 shadow-sm dataset-card';
+              card.style.cursor = 'pointer';
+              card.innerHTML = `
+                <div class="card-body">
+                  <h5 class="card-title">${ds.Dataset}</h5>
+                  <p class="card-text"><strong>Framework:</strong> ${ds.Framework}</p>
+                  <p class="card-text"><strong>Modality:</strong> ${ds.Modality}</p>
+                  <p class="card-text"><strong>Dice Scores:</strong><br/>
+                    nnunet: ${ds["Dice nnunet"]}<br/>
+                    base: ${ds["Dice base"]}<br/>
+                    large: ${ds["Dice large"]}<br/>
+                    huge: ${ds["Dice huge"]}<br/>
+                    base_ft: ${ds["Dice base_ft"]}<br/>
+                    large_ft: ${ds["Dice large_ft"]}<br/>
+                    huge_ft: ${ds["Dice huge_ft"]}
+                  </p>
+                </div>
+              `;
+              card.addEventListener('click', () => showDatasetInfo(ds));
+              cardCol.appendChild(card);
+              datasetListDiv.appendChild(cardCol);
+            });
+
+            // Scroll to dataset list
+            setTimeout(() => {
+              document.getElementById('dataset-list').scrollIntoView({ behavior: 'smooth' });
+            }, 300); // Slight delay to ensure content is rendered
+          }
+        }
+      });
+
+      // Back button functionality
+      const backButton = document.getElementById('back-button');
+      // 修改后的 Back 按钮点击处理器
+      backButton.addEventListener('click', () => {
+        // 启动平滑滚动到顶部
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        // 设置延迟，以确保滚动完成后执行其他操作
+        setTimeout(() => {
+          // 隐藏主内容区域
+          const mainContent = document.getElementById('mainContent');
+          mainContent.style.display = 'none';
+          mainContent.classList.remove('show-content');
+
+          // 隐藏 Back 按钮
+          backButton.style.display = 'none';
+
+          // 隐藏数据集信息
+          document.getElementById('dataset-info').classList.add('d-none');
+
+          // 清空数据集列表
+          document.getElementById('dataset-list').innerHTML = '';
+
+          // 隐藏任何 CMD 输出
+          document.getElementById('cmd-output').classList.add('d-none');
+          document.getElementById('nlp-cmd-output').classList.add('d-none');
+
+          // 显示侧边面板
+          document.getElementById('categoryPanel').classList.add('show-panel');
+          document.getElementById('nlpPanel').classList.add('show-panel');
+
+          // 平滑滚动到顶部后，侧边面板滑入
+        }, 700); // 延迟时间可根据需要调整（例如，根据滚动速度设置为 700ms）
+      });
+    });
   </script>
-
 </body>
+
 </html>
