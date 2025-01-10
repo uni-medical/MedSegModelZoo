@@ -1137,6 +1137,66 @@
 
       setupSearch();
     });
+
+    // 折叠面板交互
+    document.querySelectorAll('.accordion-header').forEach(header => {
+      header.addEventListener('click', () => {
+        const accordion = header.parentElement;
+        accordion.classList.toggle('active');
+      });
+    });
+
+    // 筛选条件更新
+    function updateFilters() {
+      const selectedFilters = [];
+      document.querySelectorAll('.filter-option input:checked').forEach(input => {
+        const text = input.closest('.filter-option').querySelector('.option-text').textContent;
+        selectedFilters.push(text);
+      });
+      
+      // 更新已选筛选条件
+      const activeFilters = document.querySelector('.active-filters');
+      activeFilters.innerHTML = selectedFilters.map(filter => `
+        <div class="filter-chip">
+          ${filter} <i class="bi bi-x" onclick="removeFilter(this)"></i>
+        </div>
+      `).join('') + `
+        <button class="clear-filters" onclick="clearFilters()">Clear all filters</button>
+      `;
+      
+      // 更新选中数量
+      document.querySelectorAll('.filter-accordion').forEach(accordion => {
+        const checkedCount = accordion.querySelectorAll('input:checked').length;
+        const countEl = accordion.querySelector('.selected-count');
+        if (countEl) {
+          countEl.textContent = checkedCount ? `${checkedCount} selected` : '';
+        }
+      });
+    }
+
+    // 移除单个筛选条件
+    function removeFilter(el) {
+      const filterText = el.parentElement.textContent.trim();
+      document.querySelectorAll('.filter-option').forEach(option => {
+        if (option.querySelector('.option-text').textContent === filterText) {
+          option.querySelector('input').checked = false;
+        }
+      });
+      updateFilters();
+    }
+
+    // 清除所有筛选条件
+    function clearFilters() {
+      document.querySelectorAll('.filter-option input').forEach(input => {
+        input.checked = false;
+      });
+      updateFilters();
+    }
+
+    // 监听筛选条件变化
+    document.querySelectorAll('.filter-option input').forEach(input => {
+      input.addEventListener('change', updateFilters);
+    });
   </script>
 </body>
 </html>
