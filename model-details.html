@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Model Details - MedSeg</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="styles/shared.css">
+  
+  <style>
+    /* 布局容器 */
+    .page-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px;
+      margin-top: 60px;
+    }
+
+    .model-detail {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* 通用区块样式 */
+    .content-section {
+      padding: 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+
+    /* 性能指标卡片 */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .metric-card {
+      padding: 20px;
+      background: var(--background);
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .metric-value {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .metric-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* 信息网格 */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+    }
+
+    .info-item {
+      padding: 16px;
+      background: var(--background);
+      border-radius: 8px;
+    }
+
+    .info-label {
+      font-size: 13px;
+      color: var(--primary);
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+
+    .info-value {
+      font-size: 14px;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    /* 代码块 */
+    .code-block {
+      position: relative;
+      background: var(--background);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .code-block pre {
+      margin: 0;
+      overflow-x: auto;
+    }
+
+    .code-block code {
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .copy-button {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--surface);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .copy-button:hover {
+      background: var(--surface-hover);
+      border-color: var(--border-hover);
+      color: var(--text-primary);
+    }
+
+    .copy-button .copy-icon {
+      flex-shrink: 0;
+    }
+
+    .copy-button span {
+      font-size: 13px;
+    }
+
+    /* 错误提示 */
+    .error-message {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--text-secondary);
+    }
+
+    .error-message i {
+      font-size: 48px;
+      margin-bottom: 16px;
+      color: var(--error);
+    }
+
+    /* 标签组样式 */
+    .badge-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .badge-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .badge-group-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-right: 4px;
+    }
+
+    .badge {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .badge-primary {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .badge-secondary {
+      background: var(--background);
+      color: var(--text-secondary);
+    }
+
+    /* 代码容器样式 */
+    .code-container {
+      background: var(--background);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .code-tabs {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tab-button {
+      padding: 6px 12px;
+      border: none;
+      background: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .tab-button.active {
+      color: var(--primary);
+      background: var(--surface);
+      border-radius: 4px;
+    }
+
+    .code-content {
+      position: relative;
+    }
+
+    .code-block {
+      display: none;
+    }
+
+    .code-block.active {
+      display: block;
+    }
+
+    .code-block pre {
+      margin: 0;
+      padding: 16px;
+    }
+
+    .code-block code {
+      font-family: monospace;
+      white-space: pre;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header">
+    <div class="header-content">
+      <div class="header-left">
+        <a href="index.html" class="logo">MedSeg</a>
+        <div class="header-search">
+          <div class="search-box">
+            <i class="bi bi-search"></i>
+            <input type="text" placeholder="Search models..." aria-label="Search">
+          </div>
+        </div>
+      </div>
+      <nav class="main-nav">
+        <a href="#" class="nav-item active">Models</a>
+        <a href="#" class="nav-item">Datasets</a>
+        <a href="#" class="nav-item">Docs</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="page-container">
+    <main class="main-container">
+      <article class="model-detail">
+        <!-- 模型头部信息 -->
+        <header class="content-section">
+          <h1 class="model-title"><!-- 由 JS 填充 --></h1>
+        </header>
+
+        <!-- 数据集信息 -->
+        <section class="content-section">
+          <h2 class="section-title">Model Information</h2>
+          <div class="info-grid" role="list"><!-- 由 JS 填充 --></div>
+        </section>
+
+        <!-- 使用示例 -->
+        <section class="content-section">
+          <h2 class="section-title">Usage Example</h2>
+          <div class="code-container">
+            <div class="code-header">
+              <div class="code-tabs">
+                <button class="tab-button active" data-lang="python">Python</button>
+                <button class="tab-button" data-lang="cmd">Command Line</button>
+              </div>
+              <button class="copy-button" aria-label="Copy code">Copy</button>
+            </div>
+            <div class="code-content">
+              <pre class="code-block active" data-lang="python"><code><!-- Python code --></code></pre>
+              <pre class="code-block" data-lang="cmd"><code><!-- CMD code --></code></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- 模型信息 -->
+        <section class="content-section">
+            <h2 class="section-title">Dataset Information</h2>
+            <div class="info-grid" role="list"><!-- 由 JS 填充 --></div>
+        </section>
+
+      </article>
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const modelId = new URLSearchParams(window.location.search).get('id');
+        if (!modelId) throw new Error('No model ID provided');
+
+        const response = await fetch('STU_Benchmark_Information.json');
+        const data = await response.json();
+        
+        const model = data.find(m => {
+          const datasetId = m.Dataset.toLowerCase();
+          const searchId = modelId.toLowerCase();
+          return datasetId === `task${searchId}` || 
+                 datasetId === searchId ||
+                 datasetId.replace('task', '') === searchId;
+        });
+        
+        if (!model) throw new Error('Model not found');
+        
+        updateModelDetails(model);
+      } catch (error) {
+        console.error('Error:', error);
+        showErrorMessage(error.message);
+      }
+    });
+
+    function updateModelDetails(model) {
+      // 更新标题
+      document.querySelector('.model-title').textContent = model.Dataset.replace('Task', '');
+
+      // 更新模型信息
+      const modelGrid = document.querySelector('.info-grid');
+      const modelInfo = [
+        { label: 'Framework', value: model.Framework },
+        { 
+          label: 'Input Channels', 
+          value: `${model["Input Channels"]} channels (${model.Modality})`
+        },
+        { 
+          label: 'Output Classes', 
+          value: (() => {
+            try {
+              const categories = JSON.parse(model["Category-EN"].replace(/'/g, '"'));
+              const count = Object.keys(categories).length;
+              const classList = Object.entries(categories)
+                .filter(([key, value]) => value !== 'background')
+                .map(([key, value]) => value)
+                .join(', ');
+              return `${count} classes (${classList})`;
+            } catch (e) {
+              return model["Category-EN"];
+            }
+          })()
+        },
+        { label: 'Patch Size', value: model["Patch size"] },
+        { label: 'Training Spacing', value: model["Training spacing"] },
+        { label: 'Train Cases', value: model["Train cases"] },
+        { label: 'Test Cases', value: model["Test cases"] },
+        { 
+          label: 'Model Performance', 
+          value: `Dice Score: ${model["Dice nnunet"] || 'N/A'} (nnUNet)`
+        }
+      ];
+
+      modelGrid.innerHTML = modelInfo
+        .filter(info => info.value)
+        .map(info => `
+          <div class="info-item" role="listitem">
+            <div class="info-label">${info.label}</div>
+            <div class="info-value">${info.value}</div>
+          </div>
+        `).join('');
+
+      // 更新代码示例
+      const pythonCode = `import torch
+from medseg import load_model
+
+# Load the ${model.Dataset} model
+model = load_model("${model.Dataset.toLowerCase()}")
+
+# Predict
+output = model.predict(image)`;
+
+      const cmdCode = `# Install package
+pip install medseg
+
+# Run prediction
+medseg predict ${model.Dataset.toLowerCase()} \\
+    --input image.nii.gz \\
+    --output result.nii.gz`;
+
+      // 初始化代码块内容
+      document.querySelector('.code-block[data-lang="python"] code').textContent = pythonCode;
+      document.querySelector('.code-block[data-lang="cmd"] code').textContent = cmdCode;
+
+      // 标签切换
+      document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', () => {
+          // 移除所有活动状态
+          document.querySelectorAll('.tab-button').forEach(btn => {
+            btn.classList.remove('active');
+          });
+          document.querySelectorAll('.code-block').forEach(block => {
+            block.classList.remove('active');
+          });
+          
+          // 添加新的活动状态
+          const lang = button.dataset.lang;
+          button.classList.add('active');
+          document.querySelector(`.code-block[data-lang="${lang}"]`).classList.add('active');
+        });
+      });
+
+      // 复制功能
+      document.querySelector('.copy-button').addEventListener('click', async () => {
+        const activeCode = document.querySelector('.code-block.active code').textContent;
+        const button = document.querySelector('.copy-button');
+        const buttonText = button.querySelector('span');
+        
+        try {
+          await navigator.clipboard.writeText(activeCode);
+          buttonText.textContent = 'Copied!';
+          setTimeout(() => buttonText.textContent = 'Copy', 2000);
+        } catch (err) {
+          console.error('Failed to copy:', err);
+        }
+      });
+    }
+
+    function showErrorMessage(message) {
+      const container = document.querySelector('.main-container');
+      container.innerHTML = `
+        <div class="error-message">
+          <i class="bi bi-exclamation-circle"></i>
+          <p>${message}</p>
+          <a href="index.html" class="btn">Return to Home</a>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html> 

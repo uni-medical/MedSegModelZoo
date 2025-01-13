@@ -11,16 +11,19 @@
   <!-- Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+  <link rel="stylesheet" href="styles/shared.css">
+
   <style>
     /* 重置基础样式 */
     :root {
-      --primary: #0A6EFF;  /* 医疗蓝 */
-      --primary-light: #E8F1FF;
+      --primary: #10A37F;  /* OpenAI 的绿色 */
+      --primary-light: #E5F6F3;  /* 浅绿色背景 */
       --surface: #ffffff;
-      --background: #F7FAFC;  /* 更柔和的背景色 */
-      --border: #E2E8F0;
-      --text-primary: #1A202C;
-      --text-secondary: #4A5568;
+      --background: #F7F7F7;
+      --sidebar-background: #F9FAFB;
+      --border: #E5E5E5;
+      --text-primary: #202123;
+      --text-secondary: #6E6E80;
       --success: #38A169;  /* 用于指标数据 */
       --warning: #DD6B20;  /* 用于警告信息 */
       
@@ -33,10 +36,7 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      transition: background-color 0.2s ease,
-                  border-color 0.2s ease,
-                  box-shadow 0.2s ease,
-                  transform 0.2s ease;
+      transition: all 0.15s ease;
     }
 
     body {
@@ -141,22 +141,19 @@
 
     .filter-box {
       position: relative;
+      width: 100%;
     }
 
     .filter-box input {
-      width: 300px;
+      width: 100%;
       padding: 6px 12px 6px 32px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      font-size: 14px;
     }
 
     .filter-box i {
       position: absolute;
-      left: 10px;
+      left: 12px;
       top: 50%;
       transform: translateY(-50%);
-      color: var(--text-secondary);
     }
 
     /* 主要内容区域 */
@@ -173,25 +170,26 @@
     /* 左侧导航 */
     .sidebar {
       width: 320px;
-      background: white;
-      border-right: 1px solid #e5e7eb;
+      background: var(--sidebar-background);
+      border-right: 1px solid var(--border);
+      padding-top: 0;
     }
 
     /* 搜索框 */
     .search-box {
       border: 1px solid var(--border);
-      border-radius: 6px;
+      border-radius: 8px;  /* 减小圆角 */
       background: var(--surface);
       height: 36px;
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 0 12px;
-      transition: all 0.2s ease;
+      padding: 0 16px;
+      transition: all 0.15s ease;
     }
 
     .search-box i {
-      font-size: 14px;
+      font-size: 13px;
       color: var(--text-secondary);
     }
 
@@ -200,7 +198,7 @@
       outline: none;
       width: 100%;
       height: 100%;
-      font-size: 14px;
+      font-size: 13px;
       background: transparent;
       color: var(--text-primary);
     }
@@ -212,6 +210,7 @@
     /* 搜索框悬停和聚焦状态 */
     .search-box:hover {
       border-color: var(--primary);
+      background: var(--primary-light);
     }
 
     .search-box:focus-within {
@@ -221,12 +220,27 @@
 
     /* 调整左侧导航中搜索框的间距 */
     .nav-section .search-box {
-      margin: 16px;
+      margin: 0 16px;
+      width: calc(100% - 32px);
     }
 
     /* 调整右侧头部搜索框的宽度 */
     .models-header .search-box {
-      width: 280px;
+      width: calc(100% - 32px);  /* 使用自适应宽度 */
+      height: 32px;
+      border-radius: 20px;
+    }
+
+    /* 调整头部布局 */
+    .models-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;  /* 调整标题和搜索框之间的间距 */
+      width: 100%;  /* 确保容器占满可用空间 */
+    }
+
+    .nav-title {
+      white-space: nowrap;  /* 防止标题换行 */
     }
 
     /* 分类部分 */
@@ -291,16 +305,17 @@
 
     /* 右侧内容区域 */
     .content {
-      padding: 0 24px;
-      background: white;
+      background: var(--surface);
+      padding: 16px 24px;
     }
 
     .content-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid #e5e7eb;
+      height: 41px;
+      padding: 0 24px;
+      margin: 0 -24px;
     }
 
     .models-header {
@@ -310,7 +325,7 @@
     }
 
     .models-title {
-      font-size: 20px;
+      font-size: 16px;  /* 稍微增大标题字号 */
       font-weight: 600;
       color: var(--text-primary);
     }
@@ -333,10 +348,11 @@
       padding: 0 12px;
       border: 1px solid var(--border);
       border-radius: 6px;
-      font-size: 14px;
+      font-size: 13px;
       color: var(--text-secondary);
       background: var(--surface);
       cursor: pointer;
+      font-weight: 500;
     }
 
     .sort-select:hover {
@@ -352,48 +368,100 @@
 
     /* 模型卡片 */
     .model-card {
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 10px 12px;
-      background: var(--surface);
-      transition: all 0.2s ease;
-    }
-
-    .model-card:hover {
-      transform: translateY(-1px);
-      box-shadow: var(--shadow-md);
-      border-color: var(--primary);
-    }
-
-    .model-info {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 12px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--surface);
+      transition: all 0.2s ease;
     }
 
     .model-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 4px;
+      align-items: flex-start;
+      gap: 12px;
     }
 
     .model-name {
       font-size: 15px;
       font-weight: 600;
       color: var(--text-primary);
-      line-height: 1.2;
-      letter-spacing: -0.01em;  /* 提高可读性 */
+      line-height: 1.3;
+      margin: 0;
+      /* 文本超出两行显示省略号 */
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
     .model-modality {
-      font-size: 13px;
-      color: var(--primary);
-      background: var(--primary-light);
-      padding: 2px 8px;
-      border-radius: 4px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
       font-weight: 500;
-      letter-spacing: 0.02em;  /* 增加字母间距提高可读性 */
+      white-space: nowrap;
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .model-description {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin: 0;
+      /* 文本超出三行显示省略号 */
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .model-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      background: var(--background);
+      color: var(--text-secondary);
+    }
+
+    .model-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .model-stats {
+      display: flex;
+      gap: 12px;
+    }
+
+    .stat {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    /* 卡片悬停效果 */
+    .model-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
 
     .model-tags-row {
@@ -408,15 +476,6 @@
       gap: 4px;
       overflow: hidden;
       max-width: calc(100% - 120px);
-    }
-
-    .tag {
-      font-size: 13px;
-      color: var(--text-secondary);
-      background: var(--background);
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-weight: 500;
     }
 
     .model-actions {
@@ -554,156 +613,76 @@
     }
 
     /* 主导航标签统一样式 */
-    .main-nav-tabs {
+    .main-nav-tabs, .content-header {
       display: flex;
-      border-bottom: 1px solid #e5e7eb;
       height: 41px;
-      padding: 0 24px;
-      margin: 0 -24px;
+      padding: 0;
+      margin: 0;
       align-items: center;
-      justify-content: center;
     }
 
-    /* 左侧导航标签样式 */
-    .nav-tab {
+    /* 导航标签样式统一 */
+    .nav-tab, .nav-title {
       padding: 8px 16px;
       color: var(--text-secondary);
-      font-size: 14px;
+      font-size: 13px;
+      font-weight: 500;
       text-decoration: none;
       position: relative;
       display: flex;
       align-items: center;
-      font-weight: normal;
-      min-width: 80px;
+      height: 41px;  /* 确保高度一致 */
+      box-sizing: border-box;  /* 包含padding在内的固定高度 */
+    }
+
+    /* 左侧导航标签容器 */
+    .sidebar .main-nav-tabs {
+      display: flex;
       justify-content: center;
-    }
-
-    /* 右侧导航标题样式 */
-    .nav-title {
-      padding: 8px 16px;
-      color: var(--text-secondary);
-      font-size: 14px;
-      font-weight: normal;
+      height: 41px;
+      padding: 0;
       margin: 0;
-      display: flex;
       align-items: center;
     }
 
-    /* 激活状态统一样式 */
-    .nav-tab.active {
-      color: var(--text-primary);
+    /* 左侧导航标签样式 */
+    .sidebar .nav-tab {
+      padding: 8px 16px;
+      color: var(--text-secondary);
+      font-size: 13px;
       font-weight: 500;
+      text-decoration: none;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 41px;
+      box-sizing: border-box;
+      min-width: 80px;
+      flex: 1;
+      border: none;
+      background: transparent;  /* 确保没有背景色 */
     }
 
-    .nav-tab.active::after {
-      content: '';
-      position: absolute;
-      bottom: -1px;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: var(--text-primary);
-      border-radius: 2px;
+    /* 导航标签激活状态 - 只改变颜色和字重 */
+    .sidebar .nav-tab.active {
+      color: var(--primary);  /* 使用主色调 */
+      font-weight: 600;
+      background: transparent;  /* 确保激活状态也没有背景色 */
     }
 
-    /* 调整内容区域布局 */
-    .content {
+    .sidebar .nav-tab.active::after {
+      display: none;
+    }
+
+    /* 右侧头部容器 */
+    .content-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 41px;
       padding: 0 24px;
-      background: white;
-    }
-
-    /* 调整搜索框容器样式 */
-    .models-header {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    /* 调整子导航区域上边距 */
-    .nav-section {
-      padding-top: 16px;
-    }
-
-    .section-title {
-      font-size: 16px;
-      font-weight: 600;
-      color: #6b7280;
-      margin: 24px 0 12px;
-    }
-
-    .task-list {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      margin-top: 8px;
-    }
-
-    .task-item {
-      padding: 8px 12px;
-      border-radius: 6px;
-      color: var(--text-secondary);
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .task-item:hover {
-      background: var(--background);
-    }
-
-    .task-item.active {
-      background: var(--primary-light);
-      color: var(--primary);
-    }
-
-    .task-item i {
-      color: var(--text-secondary);
-      transition: color 0.15s ease;
-    }
-
-    .task-item.active i {
-      color: var(--primary);
-    }
-
-    /* 搜索框样式 */
-    .content-header .search-box {
-      width: 300px;
-      margin-bottom: 0;
-      border-radius: 6px;
-    }
-
-    .content-header .search-box input {
-      padding: 6px 8px;
-    }
-
-    .models-label {
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    .models-title {
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--text-secondary);
-    }
-
-    .title-group {
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-    }
-
-    /* 导航标题样式 */
-    .nav-title {
-      font-size: 14px;
-      font-weight: normal;
-      color: #6b7280;
-      margin: 0;
-      padding: 8px 16px;
-      display: flex;
-      align-items: center;
+      margin: 0 -24px;
     }
 
     /* 调整搜索框位置 */
@@ -722,7 +701,7 @@
     }
 
     .nav-tab.active {
-      color: var(--primary);
+      color: var(--text-primary);
     }
 
     .nav-tab.active::after {
@@ -760,6 +739,846 @@
       font-size: 16px;
       color: var(--text-secondary);
     }
+
+    /* 子导航区域样式 */
+    .nav-section {
+      padding: 0;
+    }
+
+    /* 搜索框容器样式 */
+    .nav-section .search-box {
+      margin: 0 auto 16px;  /* 上下margin 16px，左右auto实现居中 */
+      width: 85%;  /* 设置一个合适的宽度，不要太宽 */
+      height: 32px;
+      display: flex;
+      align-items: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0 12px;
+    }
+
+    /* 搜索框输入框样式 */
+    .nav-section .search-box input {
+      border: none;
+      outline: none;
+      width: 100%;
+      height: 100%;
+      font-size: 13px;
+      background: transparent;
+      color: var(--text-primary);
+    }
+
+    /* 搜索框图标样式 */
+    .nav-section .search-box i {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-right: 8px;
+    }
+
+    /* 搜索框placeholder样式 */
+    .nav-section .search-box input::placeholder {
+      color: var(--text-secondary);
+    }
+
+    /* 搜索框悬停和聚焦状态 */
+    .nav-section .search-box:hover {
+      border-color: var(--primary);
+    }
+
+    .nav-section .search-box:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px var(--primary-light);
+    }
+
+    /* 任务列表样式 */
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;  /* 减小项目间距 */
+      padding: 0 16px;
+    }
+
+    /* 任务项样式 */
+    .task-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .task-item:hover {
+      background: var(--background);
+      color: var(--text-primary);
+    }
+
+    .task-item.active {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .task-item i {
+      margin-right: 8px;
+      font-size: 16px;
+    }
+
+    .task-item .count {
+      margin-left: auto;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* 添加选中项的样式 */
+    .task-item.active i {
+      color: var(--primary);
+    }
+
+    .task-item.active .count {
+      color: var(--primary);
+    }
+
+    /* 分组标题样式 */
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin: 16px 0 8px;
+      padding: 0 12px;
+    }
+
+    /* 右侧头部搜索框 */
+    .content-header .search-box {
+      width: 280px;
+      height: 32px;
+      border-radius: 20px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .content-header .search-box input {
+      border: none;
+      outline: none;
+      width: 100%;
+      height: 100%;
+      font-size: 13px;
+      background: transparent;
+      color: var(--text-primary);
+    }
+
+    .content-header .search-box i {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* 搜索框悬停和聚焦状态 */
+    .content-header .search-box:hover {
+      border-color: var(--primary);
+    }
+
+    .content-header .search-box:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(10, 110, 255, 0.15);
+    }
+
+    /* 排序下拉框样式 */
+    .sort-select {
+      height: 36px;
+      padding: 0 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      background: var(--surface);
+      cursor: pointer;
+      width: 130px;  /* 设置固定宽度 */
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+    }
+
+    /* 下拉框悬停和聚焦状态 */
+    .sort-select:hover {
+      border-color: var(--primary);
+    }
+
+    .sort-select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px var(--primary-light);
+    }
+
+    /* 搜索框悬停和聚焦状态 */
+    .content-header .search-box:hover {
+      border-color: var(--primary);
+    }
+
+    .content-header .search-box:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px var(--primary-light);
+    }
+
+    /* 调整头部布局 */
+    .content-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;  /* 添加间距 */
+    }
+
+    /* 添加性能指标的视觉提示 */
+    .performance-metric {
+      font-size: 13px;
+      color: var(--success);
+      background: rgba(56, 161, 105, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: auto;
+    }
+
+    /* 添加加载状态 */
+    .loading-skeleton {
+      background: linear-gradient(90deg, #f0f0f0 25%, #f7f7f7 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+    }
+
+    @keyframes loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* 添加空状态提示 */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-secondary);
+    }
+
+    /* 焦点状态优化 */
+    :focus {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--primary-light);
+    }
+
+    /* 键盘导航优化 */
+    .nav-tab:focus-visible,
+    .task-item:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: -2px;
+    }
+
+    /* 添加工具提示样式 */
+    [data-tooltip] {
+      position: relative;
+    }
+
+    [data-tooltip]:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 4px 8px;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      font-size: 12px;
+      border-radius: 4px;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    /* 添加响应式断点 */
+    @media (max-width: 1024px) {
+      .models-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+      
+      .sidebar {
+        display: none;
+      }
+    }
+
+    /* 分页容器样式 */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+      margin-top: 24px;
+      padding: 16px 0;
+    }
+
+    .page-button {
+      height: 36px;
+      min-width: 36px;
+      padding: 0 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--text-secondary);
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .page-button:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .page-button.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+
+    .page-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* 统一所有搜索框的基础样式 */
+    .search-box, .filter-box input, .nav-section .search-box, .models-header .search-box {
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: var(--surface);
+      height: 32px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 16px;
+      transition: all 0.2s ease;
+    }
+
+    /* 统一所有搜索框的输入框样式 */
+    .search-box input, 
+    .filter-box input,
+    .nav-section .search-box input,
+    .models-header .search-box input {
+      border: none;
+      outline: none;
+      width: 100%;
+      height: 100%;
+      font-size: 13px;  /* 统一字体大小 */
+      background: transparent;
+      color: var(--text-primary);
+    }
+
+    /* 统一所有搜索框的图标样式 */
+    .search-box i, 
+    .filter-box i,
+    .nav-section .search-box i,
+    .models-header .search-box i {
+      font-size: 13px;  /* 统一图标大小 */
+      color: var(--text-secondary);
+    }
+
+    /* 统一搜索框的placeholder样式 */
+    .search-box input::placeholder,
+    .filter-box input::placeholder,
+    .nav-section .search-box input::placeholder,
+    .models-header .search-box input::placeholder {
+      color: var(--text-secondary);
+      font-size: 13px;  /* 统一placeholder字体大小 */
+    }
+
+    /* 统一悬停和聚焦状态 */
+    .search-box:hover, .filter-box input:hover {
+      border-color: var(--primary);
+    }
+
+    .search-box:focus-within, .filter-box input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(10, 110, 255, 0.15);
+    }
+
+    /* 修改 filter-box 的样式 */
+    .filter-box {
+      position: relative;
+      width: 100%;
+    }
+
+    .filter-box input {
+      width: 100%;
+      padding: 6px 12px 6px 32px;
+    }
+
+    .filter-box i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    /* 调整左侧导航中搜索框的间距 */
+    .nav-section .search-box {
+      margin: 16px;
+      width: calc(100% - 32px);
+    }
+
+    /* 导航标签文字样式 */
+    .nav-tab {
+      padding: 8px 16px;
+      color: var(--text-secondary);
+      font-size: 13px;  /* 统一导航标签字体大小 */
+      text-decoration: none;
+    }
+
+    /* 任务项样式 */
+    .task-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 13px;  /* 统一任务项字体大小 */
+    }
+
+    /* 计数样式 */
+    .task-item .count {
+      margin-left: auto;
+      font-size: 13px;  /* 统一计数字体大小 */
+      color: var(--text-secondary);
+    }
+
+    /* 标题样式 */
+    .nav-title {
+      font-size: 13px;  /* 统一标题字体大小 */
+      white-space: nowrap;
+    }
+
+    /* 搜索框 placeholder 样式 */
+    .search-box input::placeholder {
+      font-size: 13px;  /* 确保与其他文字大小一致 */
+      color: var(--text-secondary);
+    }
+
+    /* 添加模型数量的样式 */
+    .models-count {
+      color: var(--text-secondary);
+      font-size: 13px;  /* 保持与其他文字大小一致 */
+      font-weight: normal;
+    }
+
+    /* 调整标题样式 */
+    .nav-title {
+      font-size: 13px;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 4px;  /* 标题和数量之间的间距 */
+    }
+
+    /* 主导航容器 */
+    .main-nav-tabs {
+      display: flex;
+      align-items: center;
+      height: 41px;
+      padding: 0;
+      margin: 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* 导航标签 */
+    .nav-tab {
+      padding: 0 16px;
+      height: 41px;
+      display: flex;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: all 0.15s ease;
+      cursor: pointer;
+      background: transparent;  /* 确保没有背景色 */
+    }
+
+    /* 标题样式 */
+    .nav-title {
+      font-size: 13px;
+      font-weight: 500;
+      height: 41px;  /* 与导航标签同高 */
+      display: flex;
+      align-items: center;
+    }
+
+    /* 左侧导航和右侧内容的容器样式 */
+    .sidebar, .content {
+      padding-top: 0;  /* 移除顶部内边距 */
+    }
+
+    /* 确保所有容器没有额外的边距 */
+    .sidebar .nav-section,
+    .content .models-section {
+      margin-top: 0;
+    }
+
+    /* 侧边栏导航标签激活状态 */
+    .sidebar .nav-tab.active {
+      background: transparent;  /* 移除白色背景 */
+      color: var(--primary);
+    }
+
+    /* 任务项悬停状态 */
+    .sidebar .task-item:hover {
+      background: var(--surface);
+    }
+
+    /* 导航标签基础样式 */
+    .nav-tab {
+      padding: 0 16px;
+      height: 41px;
+      display: flex;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: all 0.15s ease;
+      cursor: pointer;
+      background: transparent;  /* 确保没有背景色 */
+    }
+
+    /* 导航标签激活状态 - 只改变颜色和字重 */
+    .nav-tab.active {
+      color: var(--primary);  /* 使用主色调 */
+      font-weight: 600;
+      background: transparent;  /* 确保激活状态也没有背景色 */
+    }
+
+    /* 导航标签悬停状态 */
+    .nav-tab:hover {
+      color: var(--primary);  /* 悬停时也使用主色调 */
+      background: transparent;  /* 确保悬停时也没有背景色 */
+    }
+
+    /* 任务项基础样式 */
+    .task-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: 6px;
+      transition: all 0.15s ease;
+      margin: 0 4px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    /* 任务项计数样式 */
+    .task-item .count {
+      margin-left: auto;
+      color: var(--text-secondary);
+    }
+
+    /* 任务项悬停状态 */
+    .task-item:hover {
+      background: var(--surface);
+      color: var(--text-primary);
+    }
+
+    /* 任务项激活状态 */
+    .task-item.active {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* 确保所有交互元素有平滑过渡 */
+    .task-item, 
+    .nav-tab {
+      transition: all 0.15s ease;
+    }
+
+    /* 统一所有导航类型的基础样式 */
+    .nav-tab,
+    .nav-link {
+      padding: 0 16px;
+      height: 41px;
+      display: flex;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: all 0.15s ease;
+      cursor: pointer;
+      background: transparent;
+      text-decoration: none;
+    }
+
+    /* 统一所有导航的激活状态 */
+    .nav-tab.active,
+    .nav-link.active {
+      color: var(--primary);
+      font-weight: 600;
+      background: transparent;
+    }
+
+    /* 统一所有导航的悬停状态 */
+    .nav-tab:hover,
+    .nav-link:hover {
+      color: var(--primary);
+      background: transparent;
+    }
+
+    /* 顶部导航链接样式 */
+    .header-nav a,            /* 如果使用了这个类 */
+    .top-nav-link,           /* 或者这个类 */
+    .header-link,            /* 或者这个类 */
+    .nav-menu a {            /* 或者在这个容器下的链接 */
+      padding: 0 16px;
+      height: 41px;
+      display: flex;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: all 0.15s ease;
+      cursor: pointer;
+      background: transparent;
+      text-decoration: none;
+    }
+
+    /* 激活状态 */
+    .header-nav a.active,
+    .top-nav-link.active,
+    .header-link.active,
+    .nav-menu a.active {
+      color: var(--primary);
+      font-weight: 600;
+      background: transparent;
+    }
+
+    /* 悬停状态 */
+    .header-nav a:hover,
+    .top-nav-link:hover,
+    .header-link:hover,
+    .nav-menu a:hover {
+      color: var(--primary);
+      background: transparent;
+    }
+
+    /* 顶部导航链接样式 */
+    .main-nav .nav-item {
+      padding: 0 16px;
+      height: 41px;
+      display: flex;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: all 0.15s ease;
+      cursor: pointer;
+      background: transparent;
+      text-decoration: none;
+    }
+
+    /* 激活状态 */
+    .main-nav .nav-item.active {
+      color: var(--primary);
+      font-weight: 600;
+      background: transparent;
+    }
+
+    /* 悬停状态 */
+    .main-nav .nav-item:hover {
+      color: var(--primary);
+      background: transparent;
+    }
+
+    /* 卡片标题 */
+    .model-card h3 {
+      font-size: 14px;
+      margin: 0;  /* 移除边距 */
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* 卡片描述文本 */
+    .model-card p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin: 0;  /* 移除边距 */
+      line-height: 1.3;  /* 减小行高 */
+      display: -webkit-box;
+      -webkit-line-clamp: 2;  /* 限制描述最多显示2行 */
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* 标签容器 */
+    .model-card .tags {
+      display: flex;
+      gap: 4px;  /* 减小标签间距 */
+      flex-wrap: wrap;
+      margin-top: 4px;  /* 减小上边距 */
+    }
+
+    /* 标签样式 */
+    .tag {
+      font-size: 12px;
+      color: var(--text-secondary);
+      background: var(--background);
+      padding: 2px 8px;  /* 减小上下内边距 */
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    /* 确保卡片是可点击的链接样式 */
+    .model-card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      background: var(--surface);
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+
+    .model-card:hover {
+      border-color: var(--primary);
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    /* 确保卡片内的文本样式正确 */
+    .model-card h3 {
+      color: var(--text-primary);
+      margin: 0;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .model-description {
+      color: var(--text-secondary);
+      font-size: 13px;
+      margin: 8px 0;
+      line-height: 1.4;
+    }
+
+    /* 统计信息样式 */
+    .model-stats {
+      display: flex;
+      gap: 12px;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    .stat {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* 确保这些样式与上面完全一致 */
+    .nav-container {
+      width: 100%;
+      height: 64px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100%;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+    }
+
+    .nav-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .nav-link:hover {
+      color: var(--text-primary);
+    }
+
+    .nav-link.active {
+      color: var(--text-primary);
+    }
+
+    /* 搜索框 placeholder 样式 */
+    .search-box input::placeholder {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* 添加模型数量的样式 */
+    .models-count {
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: normal;
+    }
+
+    /* 调整标题样式 */
+    .nav-title {
+      font-size: 13px;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* 主导航容器 */
+    .main-nav-tabs {
+      display: flex;
+      align-items: center;
+      height: 41px;
+      padding: 0;
+      margin: 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* 导航标签 - 仅用于二级导航 */
+    .nav-tab {
+      padding: 0 16px;
+      height: 41px;
+      display: flex;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: all 0.15s ease;
+      cursor: pointer;
+      background: transparent;
+    }
   </style>
 </head>
 
@@ -790,88 +1609,113 @@
     <aside class="sidebar">
       <!-- 主导航 -->
       <div class="main-nav-tabs">
-        <a href="#" class="nav-tab active" data-target="tasks">Tasks</a>
-        <a href="#" class="nav-tab" data-target="target">Target</a>
-        <a href="#" class="nav-tab" data-target="modality">Modality</a>
+        <a href="#" class="nav-tab active" data-tab="tasks">Tasks</a>
+        <a href="#" class="nav-tab" data-tab="target">Target</a>
+        <a href="#" class="nav-tab" data-tab="modality">Modality</a>
       </div>
 
-      <!-- 子导航区域 -->
-      <div class="sub-navigation">
-        <!-- Tasks分类 -->
-        <div class="nav-section" id="tasks-section" style="display: block;">
-          <!-- Tasks搜索框 -->
-          <div class="search-box">
-            <i class="bi bi-search"></i>
-            <input type="text" placeholder="Filter Tasks by name" data-filter="tasks">
-          </div>
-          <div class="task-list">
-            <a href="#" class="task-item active">
-              <i class="bi bi-grid"></i>
-              <span>All</span>
-            </a>
-            <a href="#" class="task-item">
-              <i class="bi bi-circle"></i>
-              <span>Segmentation</span>
-              <span class="count">(45)</span>
-            </a>
-            <a href="#" class="task-item">
-              <i class="bi bi-bounding-box"></i>
-              <span>Detection</span>
-              <span class="count">(23)</span>
-            </a>
-          </div>
+      <!-- Tasks导航内容 -->
+      <div class="nav-section" data-tab="tasks">
+        <div class="search-box">
+          <i class="bi bi-search"></i>
+          <input type="text" placeholder="Filter tasks by name">
         </div>
-
-        <!-- Target分类 -->
-        <div class="nav-section" id="target-section" style="display: none;">
-          <!-- Target搜索框 -->
-          <div class="search-box">
-            <i class="bi bi-search"></i>
-            <input type="text" placeholder="Filter Target by name" data-filter="target">
-          </div>
-          <div class="task-list">
-            <a href="#" class="task-item">
-              <i class="bi bi-brain"></i>
-              <span>Brain</span>
-              <span class="count">(15)</span>
-            </a>
-            <a href="#" class="task-item">
-              <i class="bi bi-heart"></i>
-              <span>Heart</span>
-              <span class="count">(12)</span>
-            </a>
-            <a href="#" class="task-item">
-              <i class="bi bi-lungs"></i>
-              <span>Lung</span>
-              <span class="count">(8)</span>
-            </a>
-            <a href="#" class="task-item">
-              <i class="bi bi-droplet"></i>
-              <span>Liver</span>
-              <span class="count">(6)</span>
-            </a>
-          </div>
+        <div class="task-list">
+          <a href="#" class="task-item">
+            <i class="bi bi-circle"></i>
+            <span>Segmentation</span>
+            <span class="count">(32)</span>
+          </a>
+          <a href="#" class="task-item">
+            <i class="bi bi-circle"></i>
+            <span>Classification</span>
+            <span class="count">(28)</span>
+          </a>
+          <a href="#" class="task-item">
+            <i class="bi bi-circle"></i>
+            <span>Detection</span>
+            <span class="count">(15)</span>
+          </a>
         </div>
+      </div>
 
-        <!-- Modality分类 -->
-        <div class="nav-section" id="modality-section" style="display: none;">
-          <!-- Modality搜索框 -->
-          <div class="search-box">
-            <i class="bi bi-search"></i>
-            <input type="text" placeholder="Filter Modality by name" data-filter="modality">
-          </div>
-          <div class="task-list">
-            <a href="#" class="task-item">
-              <i class="bi bi-image"></i>
-              <span>CT</span>
-              <span class="count">(32)</span>
-            </a>
-            <a href="#" class="task-item">
-              <i class="bi bi-image"></i>
-              <span>MRI</span>
-              <span class="count">(28)</span>
-            </a>
-          </div>
+      <!-- Target导航内容 -->
+      <div class="nav-section" data-tab="target" style="display: none;">
+        <div class="search-box">
+          <i class="bi bi-search"></i>
+          <input type="text" placeholder="Filter targets by name">
+        </div>
+        <div class="task-list">
+          <a href="#" class="task-item">
+            <i class="bi bi-circle"></i>
+            <span>Brain</span>
+            <span class="count">(15)</span>
+          </a>
+          <a href="#" class="task-item">
+            <i class="bi bi-circle"></i>
+            <span>Liver</span>
+            <span class="count">(12)</span>
+          </a>
+          <a href="#" class="task-item">
+            <i class="bi bi-circle"></i>
+            <span>Lung</span>
+            <span class="count">(10)</span>
+          </a>
+          <a href="#" class="task-item">
+            <i class="bi bi-circle"></i>
+            <span>Kidney</span>
+            <span class="count">(8)</span>
+          </a>
+          <a href="#" class="task-item">
+            <i class="bi bi-circle"></i>
+            <span>Heart</span>
+            <span class="count">(6)</span>
+          </a>
+          <a href="#" class="task-item">
+            <i class="bi bi-circle"></i>
+            <span>Pancreas</span>
+            <span class="count">(4)</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Modality导航内容 -->
+      <div class="nav-section" data-tab="modality" style="display: none;">
+        <div class="search-box">
+          <i class="bi bi-search"></i>
+          <input type="text" placeholder="Filter modalities by name">
+        </div>
+        <div class="task-list">
+          <a href="#" class="task-item">
+            <i class="bi bi-circle"></i>
+            <span>CT</span>
+            <span class="count">(25)</span>
+          </a>
+          <a href="#" class="task-item">
+            <i class="bi bi-circle"></i>
+            <span>MRI</span>
+            <span class="count">(20)</span>
+          </a>
+          <a href="#" class="task-item">
+            <i class="bi bi-circle"></i>
+            <span>X-Ray</span>
+            <span class="count">(15)</span>
+          </a>
+          <a href="#" class="task-item">
+            <i class="bi bi-circle"></i>
+            <span>Ultrasound</span>
+            <span class="count">(10)</span>
+          </a>
+          <a href="#" class="task-item">
+            <i class="bi bi-circle"></i>
+            <span>PET</span>
+            <span class="count">(8)</span>
+          </a>
+          <a href="#" class="task-item">
+            <i class="bi bi-circle"></i>
+            <span>SPECT</span>
+            <span class="count">(5)</span>
+          </a>
         </div>
       </div>
     </aside>
@@ -881,83 +1725,185 @@
       <!-- 头部 -->
       <div class="content-header">
         <div class="models-header">
-          <h1 class="nav-title">Models</h1>
-          <div class="search-box">
-            <i class="bi bi-search"></i>
-            <input type="text" placeholder="Filter by name">
-          </div>
+          <h1 class="nav-title">Models <span class="models-count">(75)</span></h1>
         </div>
         <div class="header-actions">
           <select class="sort-select">
-            <option>Sort: Trending</option>
-            <option>Sort: Most Downloads</option>
-            <option>Sort: Recently Added</option>
+            <option>Trending</option>
+            <option>Most Downloads</option>
+            <option>Recently Added</option>
           </select>
         </div>
       </div>
 
       <!-- 模型卡片网格 -->
       <div class="models-grid">
-        <!-- 模型卡片将通过JavaScript动态生成 -->
+        <!-- 使用相对路径，指向model-details.html -->
+        <a href="model-details.html?id=001_BrainTumour" class="model-card">
+          <div class="model-header">
+            <h3>Brain Tumour Segmentation</h3>
+            <div class="model-stats">
+              <span class="stat">
+                <i class="bi bi-download"></i>
+                1.2k
+              </span>
+              <span class="stat">
+                <i class="bi bi-star"></i>
+                234
+              </span>
+            </div>
+          </div>
+          <p class="model-description">Model description goes here...</p>
+          <div class="tags">
+            <span class="tag">Segmentation</span>
+            <span class="tag">Medical</span>
+          </div>
+        </a>
+        
+        <!-- 更多模型卡片... -->
+      </div>
+
+      <div class="pagination">
+        <button class="page-button" disabled>
+          <i class="bi bi-chevron-left"></i>
+        </button>
+        <button class="page-button active">1</button>
+        <button class="page-button">2</button>
+        <button class="page-button">3</button>
+        <span class="page-button" style="cursor: default;">...</span>
+        <button class="page-button">8</button>
+        <button class="page-button">
+          <i class="bi bi-chevron-right"></i>
+        </button>
       </div>
     </main>
   </div>
 
   <script>
+    // 在脚本开始处声明全局变量
+    let allModels = [];
+    let currentModels = [];
+    let currentPage = 1;
+    const ITEMS_PER_PAGE = 16;
+
+    // 确保这个函数在 loadModels 之前定义
+    function updateFilterCounts(models) {
+      if (!models) return;
+      
+      // 更新任务数量
+      const taskCounts = {
+        'Segmentation': 0,
+        'Classification': 0,
+        'Detection': 0
+      };
+
+      // 更新目标器官数量
+      const targetCounts = {
+        'Brain': 0,
+        'Liver': 0,
+        'Lung': 0,
+        'Kidney': 0,
+        'Heart': 0,
+        'Pancreas': 0
+      };
+
+      // 更新模态数量
+      const modalityCounts = {
+        'CT': 0,
+        'MRI': 0,
+        'X-Ray': 0,
+        'Ultrasound': 0,
+        'PET': 0,
+        'SPECT': 0
+      };
+
+      // 计算数量
+      models.forEach(model => {
+        // 更新模态计数
+        const modalities = model.Modality.split(',');
+        modalities.forEach(modality => {
+          const key = modality.trim();
+          if (modalityCounts.hasOwnProperty(key)) {
+            modalityCounts[key]++;
+          }
+        });
+
+        // 更新目标器官计数
+        try {
+          const categories = JSON.parse(model["Category-EN"].replace(/'/g, '"'));
+          Object.values(categories).forEach(category => {
+            if (targetCounts.hasOwnProperty(category)) {
+              targetCounts[category]++;
+            }
+          });
+        } catch (e) {
+          console.error('Error parsing categories:', e);
+        }
+      });
+
+      // 更新 UI
+      // 更新任务数量显示
+      document.querySelectorAll('.task-item').forEach(item => {
+        const taskName = item.querySelector('span').textContent;
+        const countSpan = item.querySelector('.count');
+        if (countSpan && taskCounts.hasOwnProperty(taskName)) {
+          countSpan.textContent = `(${taskCounts[taskName]})`;
+        }
+      });
+
+      // 更新目标器官数量显示
+      document.querySelectorAll('[data-tab="target"] .task-item').forEach(item => {
+        const targetName = item.querySelector('span').textContent;
+        const countSpan = item.querySelector('.count');
+        if (countSpan && targetCounts.hasOwnProperty(targetName)) {
+          countSpan.textContent = `(${targetCounts[targetName]})`;
+        }
+      });
+
+      // 更新模态数量显示
+      document.querySelectorAll('[data-tab="modality"] .task-item').forEach(item => {
+        const modalityName = item.querySelector('span').textContent;
+        const countSpan = item.querySelector('.count');
+        if (countSpan && modalityCounts.hasOwnProperty(modalityName)) {
+          countSpan.textContent = `(${modalityCounts[modalityName]})`;
+        }
+      });
+
+      // 更新总数显示
+      const modelsCount = document.querySelector('.models-count');
+      if (modelsCount) {
+        modelsCount.textContent = `(${models.length})`;
+      }
+    }
+
     // 加载模型数据
     async function loadModels() {
       try {
         const response = await fetch('STU_Benchmark_Information.json');
         const data = await response.json();
-        renderModelCards(data);
+        currentModels = data;
+        allModels = [...data];
+        
+        // 更新过滤计数
         updateFilterCounts(data);
+        
+        // 渲染第一页
+        renderModelCards();
       } catch (error) {
         console.error('Error loading models:', error);
       }
     }
 
-    // 更新筛选器计数
-    function updateFilterCounts(models) {
-      // 统计各类数量
-      const counts = {
-        modalities: {},
-        organs: new Set(),
-        frameworks: {}
-      };
-
-      models.forEach(model => {
-        // 统计模态
-        model.Modality.split(',').forEach(m => {
-          counts.modalities[m] = (counts.modalities[m] || 0) + 1;
-        });
-
-        // 统计框架
-        counts.frameworks[model.Framework] = (counts.frameworks[model.Framework] || 0) + 1;
-
-        // 统计器官
-        try {
-          const categories = JSON.parse(model["Category-CN"].replace(/'/g, '"'));
-          Object.values(categories).forEach(cat => {
-            if (cat !== '背景') counts.organs.add(cat);
-          });
-        } catch (e) {}
-      });
-
-      // 更新筛选器显示
-      updateModalityFilters(counts.modalities);
-      updateOrganFilters(Array.from(counts.organs));
-      updateFrameworkFilters(counts.frameworks);
-    }
-
     // 渲染模型卡片
-    function renderModelCards(models) {
+    function renderModelCards() {
       const container = document.querySelector('.models-grid');
-      if (!container) {
-        console.error('Models grid container not found');
-              return;
-      }
-
-      container.innerHTML = models.map(model => {
+      if (!container) return;
+      
+      const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+      const endIndex = startIndex + ITEMS_PER_PAGE;
+      const pageModels = currentModels.slice(startIndex, endIndex);
+      
+      container.innerHTML = pageModels.map(model => {
         // 解析类别
         let categories = {};
         try {
@@ -967,235 +1913,223 @@
           categories = {};
         }
 
-        // 获取除background外的所有类别
         const allCategories = Object.values(categories).filter(cat => cat !== 'background');
-        // 只显示前两个类别，如果有更多则显示省略号
         const displayCategories = allCategories.slice(0, 2);
         const hasMore = allCategories.length > 2;
-        
+
         const tags = displayCategories
           .map(cat => `<span class="tag">${cat}</span>`)
           .join('') + 
           (hasMore ? `<span class="tag">...</span>` : '');
 
+        const modelId = model.Dataset.replace('Task', '');
         return `
-          <div class="model-card">
-            <div class="model-info">
-              <div class="model-header">
-                <h3 class="model-name">${model.Dataset.replace('Task', '')}</h3>
-                <span class="model-modality">${model.Modality.split(',')[0]}</span>
+          <a href="./model-details.html?id=${modelId}" class="model-card">
+            <div class="model-header">
+              <h3 class="model-name">${modelId}</h3>
+              <span class="model-modality">${model.Modality.split(',')[0]}</span>
+            </div>
+            <div class="model-tags-row">
+              <div class="model-tags">
+                ${tags}
               </div>
-              <div class="model-tags-row">
-                <div class="model-tags">
-                  ${tags}
-                </div>
-                <div class="model-actions">
-                  <span class="action-stat">
-                    <i class="bi bi-download"></i>
-                    <span>2.5k</span>
-                  </span>
-                  <span class="action-stat">
-                    <i class="bi bi-heart"></i>
-                    <span>128</span>
-                  </span>
-                </div>
+              <div class="model-actions">
+                <span class="action-stat" data-tooltip="Downloads">
+                  <i class="bi bi-download"></i>
+                  <span>2.5k</span>
+                </span>
+                <span class="action-stat" data-tooltip="Likes">
+                  <i class="bi bi-heart"></i>
+                  <span>128</span>
+                </span>
               </div>
             </div>
-          </div>
+          </a>
         `;
       }).join('');
+      
+      updatePagination();
+    }
 
-      // 更新模型计数
-      const countElement = document.querySelector('.models-title');
-      if (countElement) {
-        countElement.textContent = models.length;
+    // 更新分页按钮
+    function updatePagination() {
+      const totalPages = Math.ceil(currentModels.length / ITEMS_PER_PAGE);
+      const pagination = document.querySelector('.pagination');
+      
+      // 如果只有一页，不显示分页
+      if (totalPages <= 1) {
+        pagination.innerHTML = '';
+        return;
       }
+      
+      let buttons = [];
+      
+      // 上一页按钮
+      buttons.push(`
+        <button class="page-button" ${currentPage === 1 ? 'disabled' : ''} 
+                onclick="changePage(${currentPage - 1})">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+      `);
+      
+      // 页码按钮逻辑
+      if (totalPages <= 7) {
+        // 如果总页数小于等于7，显示所有页码
+        for (let i = 1; i <= totalPages; i++) {
+          buttons.push(`
+            <button class="page-button ${i === currentPage ? 'active' : ''}" 
+                    onclick="changePage(${i})">${i}</button>
+          `);
+        }
+      } else {
+        // 如果总页数大于7，使用省略号
+        if (currentPage <= 3) {
+          // 当前页靠近开始
+          for (let i = 1; i <= 4; i++) {
+            buttons.push(`
+              <button class="page-button ${i === currentPage ? 'active' : ''}" 
+                      onclick="changePage(${i})">${i}</button>
+            `);
+          }
+          buttons.push(`<span class="page-button" style="cursor: default;">...</span>`);
+          buttons.push(`
+            <button class="page-button" onclick="changePage(${totalPages})">${totalPages}</button>
+          `);
+        } else if (currentPage >= totalPages - 2) {
+          // 当前页靠近结束
+          buttons.push(`
+            <button class="page-button" onclick="changePage(1)">1</button>
+          `);
+          buttons.push(`<span class="page-button" style="cursor: default;">...</span>`);
+          for (let i = totalPages - 3; i <= totalPages; i++) {
+            buttons.push(`
+              <button class="page-button ${i === currentPage ? 'active' : ''}" 
+                      onclick="changePage(${i})">${i}</button>
+            `);
+          }
+        } else {
+          // 当前页在中间
+          buttons.push(`
+            <button class="page-button" onclick="changePage(1)">1</button>
+          `);
+          buttons.push(`<span class="page-button" style="cursor: default;">...</span>`);
+          for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+            buttons.push(`
+              <button class="page-button ${i === currentPage ? 'active' : ''}" 
+                      onclick="changePage(${i})">${i}</button>
+            `);
+          }
+          buttons.push(`<span class="page-button" style="cursor: default;">...</span>`);
+          buttons.push(`
+            <button class="page-button" onclick="changePage(${totalPages})">${totalPages}</button>
+          `);
+        }
+      }
+      
+      // 下一页按钮
+      buttons.push(`
+        <button class="page-button" ${currentPage === totalPages ? 'disabled' : ''} 
+                onclick="changePage(${currentPage + 1})">
+          <i class="bi bi-chevron-right"></i>
+        </button>
+      `);
+      
+      pagination.innerHTML = buttons.join('');
+    }
+
+    // 切换页面
+    function changePage(page) {
+      if (page < 1 || page > Math.ceil(currentModels.length / ITEMS_PER_PAGE)) return;
+      currentPage = page;
+      renderModelCards();
+      
+      // 滚动到顶部
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
     }
 
     // 筛选功能
-    function filterModels(models, filters) {
-      return models.filter(model => {
-        // Modality filter
-        if (filters.modalities.length > 0) {
-          const modelModalities = model.Modality.split(',');
-          if (!filters.modalities.some(m => modelModalities.some(mm => mm.includes(m)))) {
-            return false;
-          }
-        }
-
-        // Anatomy filter
-        if (filters.organs.length > 0) {
-          try {
-            const categories = JSON.parse(model["Category-EN"].replace(/'/g, '"'));
-            if (!Object.values(categories).some(cat => 
-              filters.organs.some(organ => cat.toLowerCase().includes(organ))
-            )) {
-              return false;
-            }
-          } catch (e) {
-            return false;
-          }
-        }
-
-        // Framework filter
-        if (filters.frameworks.length > 0 && !filters.frameworks.includes(model.Framework)) {
-          return false;
-        }
-
+    function filterModels(filters) {
+      // 应用筛选条件
+      currentModels = currentModels.filter(model => {
+        // 添加你的筛选逻辑
         return true;
       });
-    }
-
-    // 搜索过滤功能
-    function setupSearch() {
-      const searchInputs = document.querySelectorAll('.search-box input');
       
-      searchInputs.forEach(input => {
-        input.addEventListener('input', (e) => {
-          const filterType = e.target.dataset.filter;
-          const searchValue = e.target.value.toLowerCase();
-          const section = document.getElementById(`${filterType}-section`);
-          const items = section.querySelectorAll('.task-item');
-          
-          items.forEach(item => {
-            const text = item.querySelector('span').textContent.toLowerCase();
-            if (text.includes(searchValue) || searchValue === '') {
-              item.style.display = 'flex';
-            } else {
-              item.style.display = 'none';
-            }
-          });
-        });
-      });
+      // 重置到第一页并重新渲染
+      currentPage = 1;
+      renderModelCards();
     }
 
-    // 初始化
-    document.addEventListener('DOMContentLoaded', () => {
-      loadModels();
-
-      // 筛选器事件监听
-      const filterCheckboxes = document.querySelectorAll('.filter-option input');
-      filterCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', async () => {
-          const response = await fetch('STU_Benchmark_Information.json');
-          const data = await response.json();
-          
-          // 获取当前选中的筛选条件
-          const filters = {
-            modalities: Array.from(document.querySelectorAll('input[name="modality"]:checked')).map(cb => cb.value),
-            organs: Array.from(document.querySelectorAll('input[name="organ"]:checked')).map(cb => cb.value),
-            frameworks: Array.from(document.querySelectorAll('input[name="framework"]:checked')).map(cb => cb.value)
-          };
-
-          const filteredModels = filterModels(data, filters);
-          renderModelCards(filteredModels);
-        });
-      });
-
-      // 排序功能
-      const sortSelect = document.querySelector('.sort-select');
-      sortSelect.addEventListener('change', async () => {
-        const response = await fetch('STU_Benchmark_Information.json');
-        const data = await response.json();
-        
-        const sortValue = sortSelect.value;
-        let sortedModels = [...data];
-
-        switch (sortValue) {
-          case 'performance':
-            sortedModels.sort((a, b) => parseFloat(b["Dice nnunet"]) - parseFloat(a["Dice nnunet"]));
-            break;
-          case 'newest':
-            // 如果有日期字段可以添加日期排序
-            break;
-          // 可以添加其他排序方式
-        }
-
-        renderModelCards(sortedModels);
-      });
-
-      // 导航切换功能
-      const navTabs = document.querySelectorAll('.nav-tab');
-      const sections = document.querySelectorAll('.nav-section');
-
+    // 添加导航切换功能
+    function initNavTabs() {
+      const navTabs = document.querySelectorAll('.sidebar .nav-tab');
+      const navSections = document.querySelectorAll('.nav-section');
+      
       navTabs.forEach(tab => {
         tab.addEventListener('click', (e) => {
           e.preventDefault();
-          
-          // 移除所有active类
+          // 移除所有标签的激活状态
           navTabs.forEach(t => t.classList.remove('active'));
-          sections.forEach(s => s.style.display = 'none');
-          
-          // 添加active类到当前tab
+          // 添加当前标签的激活状态
           tab.classList.add('active');
           
-          // 显示对应的section
-          const targetId = `${tab.dataset.target}-section`;
-          document.getElementById(targetId).style.display = 'block';
+          // 切换内容
+          const tabId = tab.getAttribute('data-tab');
+          switchContent(tabId);
         });
       });
+    }
 
-      setupSearch();
-    });
-
-    // 折叠面板交互
-    document.querySelectorAll('.accordion-header').forEach(header => {
-      header.addEventListener('click', () => {
-        const accordion = header.parentElement;
-        accordion.classList.toggle('active');
-      });
-    });
-
-    // 筛选条件更新
-    function updateFilters() {
-      const selectedFilters = [];
-      document.querySelectorAll('.filter-option input:checked').forEach(input => {
-        const text = input.closest('.filter-option').querySelector('.option-text').textContent;
-        selectedFilters.push(text);
+    // 内容切换逻辑
+    function switchContent(tabId) {
+      // 隐藏所有内容区域
+      const allSections = document.querySelectorAll('.nav-section');
+      allSections.forEach(section => {
+        section.style.display = 'none';
       });
       
-      // 更新已选筛选条件
-      const activeFilters = document.querySelector('.active-filters');
-      activeFilters.innerHTML = selectedFilters.map(filter => `
-        <div class="filter-chip">
-          ${filter} <i class="bi bi-x" onclick="removeFilter(this)"></i>
-        </div>
-      `).join('') + `
-        <button class="clear-filters" onclick="clearFilters()">Clear all filters</button>
-      `;
-      
-      // 更新选中数量
-      document.querySelectorAll('.filter-accordion').forEach(accordion => {
-        const checkedCount = accordion.querySelectorAll('input:checked').length;
-        const countEl = accordion.querySelector('.selected-count');
-        if (countEl) {
-          countEl.textContent = checkedCount ? `${checkedCount} selected` : '';
-        }
+      // 显示对应的内容区域
+      const activeSection = document.querySelector(`.nav-section[data-tab="${tabId}"]`);
+      if (activeSection) {
+        activeSection.style.display = 'block';
+      }
+    }
+
+    // 添加子导航项点击事件
+    function initTaskItems() {
+      const taskItems = document.querySelectorAll('.task-item');
+      taskItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+          e.preventDefault();
+          // 移除同组中其他项的激活状态
+          const parentList = item.closest('.task-list');
+          parentList.querySelectorAll('.task-item').forEach(t => {
+            t.classList.remove('active');
+          });
+          // 添加当前项的激活状态
+          item.classList.add('active');
+        });
       });
     }
 
-    // 移除单个筛选条件
-    function removeFilter(el) {
-      const filterText = el.parentElement.textContent.trim();
-      document.querySelectorAll('.filter-option').forEach(option => {
-        if (option.querySelector('.option-text').textContent === filterText) {
-          option.querySelector('input').checked = false;
-        }
-      });
-      updateFilters();
-    }
+    // 在初始化时调用
+    document.addEventListener('DOMContentLoaded', () => {
+      initNavTabs();
+      initTaskItems();
+      loadModels();
+    });
 
-    // 清除所有筛选条件
-    function clearFilters() {
-      document.querySelectorAll('.filter-option input').forEach(input => {
-        input.checked = false;
+    // 添加点击事件处理
+    document.querySelectorAll('.model-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        // 获取模型ID或URL
+        const modelUrl = card.getAttribute('href');
+        // 跳转到模型详情页
+        window.location.href = modelUrl;
       });
-      updateFilters();
-    }
-
-    // 监听筛选条件变化
-    document.querySelectorAll('.filter-option input').forEach(input => {
-      input.addEventListener('change', updateFilters);
     });
   </script>
 </body>

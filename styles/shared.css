@@ -1,0 +1,178 @@
+:root {
+  --primary: #10A37F;
+  --primary-light: #E5F6F3;
+  --surface: #ffffff;
+  --background: #F7F7F7;
+  --sidebar-background: #F9FAFB;
+  --border: #E5E5E5;
+  --text-primary: #202123;
+  --text-secondary: #6E6E80;
+  --success: #38A169;
+  --warning: #DD6B20;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+}
+
+/* 基础重置 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--background);
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+/* 共享组件样式 */
+.badge {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.badge-primary {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.badge-secondary {
+  background: var(--background);
+  color: var(--text-secondary);
+}
+
+/* 按钮样式 */
+.btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+/* 顶部导航 */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
+.header-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 16px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  font-weight: 600;
+  font-size: 20px;
+  color: var(--text-primary);
+  text-decoration: none;
+  margin-right: 24px;
+}
+
+.header-search {
+  width: 300px;
+  margin-right: auto;
+}
+
+.main-nav {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.nav-item {
+  padding: 0 16px;
+  height: 41px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  background: transparent;
+}
+
+.nav-item:hover {
+  color: var(--primary);
+  background: transparent;
+}
+
+.nav-item.active {
+  color: var(--primary);
+  font-weight: 600;
+  background: transparent;
+}
+
+/* 搜索框样式 */
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  width: 280px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+}
+
+.search-box i {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.search-box input {
+  border: none;
+  outline: none;
+  width: 100%;
+  background: transparent;
+  font-size: 13px;
+  color: var(--text-primary);
+  padding: 0;
+  line-height: 32px;
+}
+
+.search-box input::placeholder {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+/* 搜索框交互状态 */
+.search-box:hover {
+  border-color: var(--primary);
+}
+
+.search-box:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(10, 110, 255, 0.15);
+} 
