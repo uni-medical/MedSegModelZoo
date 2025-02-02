@@ -13,7 +13,7 @@
 #    limitations under the License.
 
 
-from nnunet.paths import nnUNet_raw_data, preprocessing_output_dir, nnUNet_cropped_data, network_training_output_dir
+from segbook.nnunet.paths import nnUNet_raw_data, preprocessing_output_dir, nnUNet_cropped_data, network_training_output_dir
 from batchgenerators.utilities.file_and_folder_operations import *
 import numpy as np
 

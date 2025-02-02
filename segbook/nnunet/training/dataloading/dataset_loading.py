@@ -18,8 +18,8 @@ from multiprocessing import Pool
 
 from batchgenerators.dataloading.data_loader import SlimDataLoaderBase
 
-from nnunet.configuration import default_num_threads
-from nnunet.paths import preprocessing_output_dir
+from segbook.nnunet.configuration import default_num_threads
+from segbook.nnunet.paths import preprocessing_output_dir
 from batchgenerators.utilities.file_and_folder_operations import *
 
 

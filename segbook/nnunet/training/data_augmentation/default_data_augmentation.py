@@ -24,12 +24,12 @@ from batchgenerators.transforms.color_transforms import GammaTransform
 from batchgenerators.transforms.spatial_transforms import SpatialTransform, MirrorTransform
 from batchgenerators.transforms.utility_transforms import RemoveLabelTransform, RenameTransform, NumpyToTensor
 
-from nnunet.training.data_augmentation.custom_transforms import Convert3DTo2DTransform, Convert2DTo3DTransform, \
+from segbook.nnunet.training.data_augmentation.custom_transforms import Convert3DTo2DTransform, Convert2DTo3DTransform, \
     MaskTransform, ConvertSegmentationToRegionsTransform
-from nnunet.training.data_augmentation.pyramid_augmentations import MoveSegAsOneHotToData, \
+from segbook.nnunet.training.data_augmentation.pyramid_augmentations import MoveSegAsOneHotToData, \
     ApplyRandomBinaryOperatorTransform, \
     RemoveRandomConnectedComponentFromOneHotEncodingTransform
-from nnunet.utilities.set_n_proc_DA import get_allowed_n_proc_DA
+from segbook.nnunet.utilities.set_n_proc_DA import get_allowed_n_proc_DA
 
 try:
     from batchgenerators.dataloading.nondet_multi_threaded_augmenter import NonDetMultiThreadedAugmenter
@@ -237,8 +237,8 @@ def get_default_augmentation(dataloader_train, dataloader_val, patch_size, param
 
 
 if __name__ == "__main__":
-    from nnunet.training.dataloading.dataset_loading import DataLoader3D, load_dataset
-    from nnunet.paths import preprocessing_output_dir
+    from segbook.nnunet.training.dataloading.dataset_loading import DataLoader3D, load_dataset
+    from segbook.nnunet.paths import preprocessing_output_dir
     import os
     import pickle
 

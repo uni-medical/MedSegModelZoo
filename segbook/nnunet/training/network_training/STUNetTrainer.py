@@ -1,9 +1,9 @@
 import torch
-from nnunet.utilities.nd_softmax import softmax_helper
+from segbook.nnunet.utilities.nd_softmax import softmax_helper
 from batchgenerators.utilities.file_and_folder_operations import *
 
-from nnunet.training.network_training.nnUNetTrainerV2 import nnUNetTrainerV2
-from nnunet.network_architecture.STUNet import STUNet
+from segbook.nnunet.training.network_training.nnUNetTrainerV2 import nnUNetTrainerV2
+from segbook.nnunet.network_architecture.STUNet import STUNet
 from torchinfo import summary
 
 class STUNetTrainer(nnUNetTrainerV2):

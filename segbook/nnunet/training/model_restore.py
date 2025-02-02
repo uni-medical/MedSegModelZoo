@@ -12,12 +12,12 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-import nnunet
+import segbook.nnunet as nnunet
 import torch
 from batchgenerators.utilities.file_and_folder_operations import *
 import importlib
 import pkgutil
-from nnunet.training.network_training.nnUNetTrainer import nnUNetTrainer
+from segbook.nnunet.training.network_training.nnUNetTrainer import nnUNetTrainer
 
 
 def recursive_find_python_class(folder, trainer_name, current_module):
@@ -57,7 +57,7 @@ def restore_model(pkl_file, checkpoint=None, train=False, fp16=None):
     init = info['init']
     name = info['name']
     search_in = join(nnunet.__path__[0], "training", "network_training")
-    tr = recursive_find_python_class([search_in], name, current_module="nnunet.training.network_training")
+    tr = recursive_find_python_class([search_in], name, current_module="segbook.nnunet.training.network_training")
 
     if tr is None:
         """

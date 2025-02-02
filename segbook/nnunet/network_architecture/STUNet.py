@@ -1,7 +1,7 @@
 from torch import nn
 import numpy as np
-from nnunet.network_architecture.initialization import InitWeights_He
-from nnunet.network_architecture.neural_network import SegmentationNetwork
+from segbook.nnunet.network_architecture.initialization import InitWeights_He
+from segbook.nnunet.network_architecture.neural_network import SegmentationNetwork
 import torch
 
 

@@ -27,21 +27,21 @@ from batchgenerators.utilities.file_and_folder_operations import *
 from torch import nn
 from torch.optim import lr_scheduler
 
-import nnunet
-from nnunet.configuration import default_num_threads
-from nnunet.evaluation.evaluator import aggregate_scores
-from nnunet.inference.segmentation_export import save_segmentation_nifti_from_softmax
-from nnunet.network_architecture.generic_UNet import Generic_UNet
-from nnunet.network_architecture.initialization import InitWeights_He
-from nnunet.network_architecture.neural_network import SegmentationNetwork
-from nnunet.postprocessing.connected_components import determine_postprocessing
-from nnunet.training.data_augmentation.default_data_augmentation import default_3D_augmentation_params, \
+import segbook.nnunet as nnunet
+from segbook.nnunet.configuration import default_num_threads
+from segbook.nnunet.evaluation.evaluator import aggregate_scores
+from segbook.nnunet.inference.segmentation_export import save_segmentation_nifti_from_softmax
+from segbook.nnunet.network_architecture.generic_UNet import Generic_UNet
+from segbook.nnunet.network_architecture.initialization import InitWeights_He
+from segbook.nnunet.network_architecture.neural_network import SegmentationNetwork
+from segbook.nnunet.postprocessing.connected_components import determine_postprocessing
+from segbook.nnunet.training.data_augmentation.default_data_augmentation import default_3D_augmentation_params, \
     default_2D_augmentation_params, get_default_augmentation, get_patch_size
-from nnunet.training.dataloading.dataset_loading import load_dataset, DataLoader3D, DataLoader2D, unpack_dataset
-from nnunet.training.loss_functions.dice_loss import DC_and_CE_loss
-from nnunet.training.network_training.network_trainer import NetworkTrainer
-from nnunet.utilities.nd_softmax import softmax_helper
-from nnunet.utilities.tensor_utilities import sum_tensor
+from segbook.nnunet.training.dataloading.dataset_loading import load_dataset, DataLoader3D, DataLoader2D, unpack_dataset
+from segbook.nnunet.training.loss_functions.dice_loss import DC_and_CE_loss
+from segbook.nnunet.training.network_training.network_trainer import NetworkTrainer
+from segbook.nnunet.utilities.nd_softmax import softmax_helper
+from segbook.nnunet.utilities.tensor_utilities import sum_tensor
 
 matplotlib.use("agg")
 
@@ -421,7 +421,7 @@ class nnUNetTrainer(NetworkTrainer):
         :param input_files:
         :return:
         """
-        from nnunet.training.model_restore import recursive_find_python_class
+        from segbook.nnunet.training.model_restore import recursive_find_python_class
         preprocessor_name = self.plans.get('preprocessor_name')
         if preprocessor_name is None:
             if self.threeD:

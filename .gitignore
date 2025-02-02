@@ -1,4 +1,13 @@
-token.txt
+# Folders
 checkpoints/
 dist/
 segbook.egg-info/
+__pycache__/
+temp_inputs/
+temp_outputs/
+test_cases/
+
+# Files
+token.txt
+*.pyc
+.DS_Store

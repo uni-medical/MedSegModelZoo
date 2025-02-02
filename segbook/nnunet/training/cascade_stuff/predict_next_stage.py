@@ -18,14 +18,14 @@ from copy import deepcopy
 import numpy as np
 from batchgenerators.utilities.file_and_folder_operations import *
 import argparse
-from nnunet.preprocessing.preprocessing import resample_data_or_seg
+from segbook.nnunet.preprocessing.preprocessing import resample_data_or_seg
 from batchgenerators.utilities.file_and_folder_operations import maybe_mkdir_p
-import nnunet
-from nnunet.run.default_configuration import get_default_configuration
+import segbook.nnunet as nnunet
+from segbook.nnunet.run.default_configuration import get_default_configuration
 from multiprocessing import Pool
 
-from nnunet.training.model_restore import recursive_find_python_class
-from nnunet.training.network_training.nnUNetTrainer import nnUNetTrainer
+from segbook.nnunet.training.model_restore import recursive_find_python_class
+from segbook.nnunet.training.network_training.nnUNetTrainer import nnUNetTrainer
 
 
 def resample_and_save(predicted, target_shape, output_file, force_separate_z=False,
@@ -112,7 +112,7 @@ if __name__ == "__main__":
 
     trainer_class = recursive_find_python_class([join(nnunet.__path__[0], "training", "network_training")],
                                                 trainerclass,
-                                                "nnunet.training.network_training")
+                                                "segbook.nnunet.training.network_training")
 
     if trainer_class is None:
         raise RuntimeError("Could not find trainer class in nnunet.training.network_training")

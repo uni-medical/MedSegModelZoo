@@ -1,6 +1,26 @@
 import os
 import requests
 from tqdm import tqdm
+from pathlib import Path
+
+def get_segbook_dir():
+    if "SEGBOOK_HOME_DIR" in os.environ:
+        segbook_dir = Path(os.environ["SEGBOOK_HOME_DIR"])
+    else:
+        # in docker container finding home not properly working therefore map to /tmp
+        home_path = Path("/tmp") if str(Path.home()) == "/" else Path.home()
+        segbook_dir = home_path / ".segbook"
+    return segbook_dir
+
+
+def get_weights_dir():
+    if "SEGBOOK_WEIGHTS_PATH" in os.environ:
+        config_dir = Path(os.environ["SEGBOOK_WEIGHTS_PATH"])
+    else:
+        segbook_dir = get_segbook_dir()
+        config_dir = segbook_dir / "nnunet/checkpoints"
+    return config_dir
+
 
 def download_file(url: str, save_path: str, chunk_size: int = 8192) -> str:
     """

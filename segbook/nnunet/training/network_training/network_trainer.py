@@ -18,7 +18,7 @@ from typing import Tuple
 
 import matplotlib
 from batchgenerators.utilities.file_and_folder_operations import *
-from nnunet.network_architecture.neural_network import SegmentationNetwork
+from segbook.nnunet.network_architecture.neural_network import SegmentationNetwork
 from sklearn.model_selection import KFold
 from torch import nn
 from torch.cuda.amp import GradScaler, autocast
@@ -36,7 +36,7 @@ import torch.backends.cudnn as cudnn
 from abc import abstractmethod
 from datetime import datetime
 from tqdm import trange
-from nnunet.utilities.to_torch import maybe_to_torch, to_cuda
+from segbook.nnunet.utilities.to_torch import maybe_to_torch, to_cuda
 
 
 class NetworkTrainer(object):

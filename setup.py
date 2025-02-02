@@ -23,7 +23,7 @@ setup(
         "numpy<2",
         "tqdm>=4.50.0",
         "requests>=2.24.0",
-        "nnunet==1.7.1",
+        # "nnunet==1.7.1",
         "torch>=2.0.0",
         "dicom2nifti",
         "scikit-image>=0.14",
@@ -36,6 +36,7 @@ setup(
         "nibabel", 
         "tifffile", 
         "matplotlib",
+        "torchinfo",
     ],
     entry_points={
         "console_scripts": [

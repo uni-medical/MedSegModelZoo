@@ -5,8 +5,8 @@ from batchgenerators.utilities.file_and_folder_operations import *
 from medpy import metric
 import SimpleITK as sitk
 import numpy as np
-from nnunet.configuration import default_num_threads
-from nnunet.postprocessing.consolidate_postprocessing import collect_cv_niftis
+from segbook.nnunet.configuration import default_num_threads
+# from segbook.nnunet.postprocessing.consolidate_postprocessing import collect_cv_niftis
 
 
 def get_brats_regions():
@@ -111,5 +111,6 @@ def evaluate_regions(folder_predicted: str, folder_gt: str, regions: dict, proce
 
 
 if __name__ == '__main__':
-    collect_cv_niftis('./', './cv_niftis')
-    evaluate_regions('./cv_niftis/', './gt_niftis/', get_brats_regions())
+    # collect_cv_niftis('./', './cv_niftis')
+    # evaluate_regions('./cv_niftis/', './gt_niftis/', get_brats_regions())
+    pass
